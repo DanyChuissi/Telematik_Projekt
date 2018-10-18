@@ -1,4 +1,4 @@
-package src.Fachkonzept;
+package src.Fachlogik;
 
 public class Main {
     public static void main(String[] args) {
