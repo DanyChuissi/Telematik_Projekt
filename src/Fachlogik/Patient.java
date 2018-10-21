@@ -1,7 +1,7 @@
 
 
 
-package src.Fachkonzept;
+package src.Fachlogik;
 
 public class Patient{
     private String name ;
