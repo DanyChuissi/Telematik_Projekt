@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Medikament {
 
-   ;
+
     private List<String> basedOn;
     private List<String> partOf;
     private boolean context;
@@ -186,6 +186,90 @@ public class Medikament {
 
     public void setIdentifier(List<Long> identifier) {
         this.identifier = identifier;
+    }
+   // public String getBesedOn (int i){
+       // return basedOn.get(i);
+    //}
+
+    public List<String> getDosage() {
+        return dosage;
+    }
+
+    public List<String> getBasedOn() {
+        return basedOn;
+    }
+
+    public List<String> getPartOf() {
+        return partOf;
+    }
+
+    public List<String> getNote() {
+        return note;
+    }
+
+    public List<String> getReasonCode() {
+        return reasonCode;
+    }
+
+    public List<String> getReasonNotTaken() {
+        return reasonNotTaken;
+    }
+
+    public List<String> getReasonReference() {
+        return reasonReference;
+    }
+    public void removeIdentifierIndex(int i){
+        identifier.get(i);
+    }
+    public void removeBasedOnIndex(int i){
+        basedOn.get(i);
+    }
+    public void removePartOfIndex(int i){
+        partOf.get(i);
+    }
+    public void removeDerivedFromIndex(int i){
+        derivedForm.get(i);
+    }
+    public void removeReasonNotTakenIndex(int i){
+        reasonNotTaken.get(i);
+    }
+    public void removeReasonCodeIndex(int i){
+        reasonCode.get(i);
+    }
+    public void removeReasonReferenceIndex(int i){
+        reasonReference.get(i);
+    }
+    public void removeNoteIndex(int i){
+        note.get(i);
+    }
+    public void removeDosageIndex(int i){
+        dosage.get(i);
+    }
+    public void removeIdentifier(List<Long> identifier){
+        identifier.remove(identifier);
+    }
+    public void removeBesedOn(List<String> basedOn){
+        basedOn.remove(basedOn);
+    }
+    public void removePartOf(List<String> partOf){
+        partOf.remove(partOf);
+    }
+    public void removeDerivedFrom(List<String> derivedForm){
+        derivedForm.remove(derivedForm);
+    }
+    public void removeReasonNotTaken(List<String> reasonNotTaken){
+        reasonNotTaken.remove(reasonNotTaken);
+    }
+    public void removeReasonCode(List<String> reasonCode){
+        reasonCode.remove(reasonCode);
+    }
+    public void removeReasopnReference(List<String> reasonReference){
+        reasonReference.remove(reasonReference);
+    }public void removeNote(List<String> note){
+        note.remove(note);
+    }
+    public void removeDosage(List<String> dosage){
+        dosage.remove(dosage);
     }
 }
 
