@@ -1,6 +1,7 @@
 package src.Fachlogik;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MedicationStatement {
@@ -8,16 +9,16 @@ public class MedicationStatement {
 
     private List<String> basedOn;
     private List<String> partOf;
-    private boolean context;
-    private boolean status;
-    private boolean category;
-    private boolean medication;
-    private boolean effective;
-    private int dateAsserted;
+    private String context;
+    private String status;
+    private String category;
+    private String medication;
+    private Date dateAsserted;
+    private String effective;
     private String informationSource;
-    private boolean subject;
+    private String subject;
     private List<String> derivedForm;
-    private boolean taken;
+    private String taken;
     private List<String> reasonNotTaken;
     private List<String> reasonCode;
     private List<String> reasonReference;
@@ -26,7 +27,7 @@ public class MedicationStatement {
     private List<Long> identifier;
 
 
-    public MedicationStatement(boolean status, boolean medication, boolean subject, boolean taken){
+    public MedicationStatement(String status, String medication, String subject, String taken, String context,String category,String effective){
         identifier = new ArrayList<>();
         basedOn = new ArrayList<>();
         partOf = new ArrayList<>();
@@ -40,6 +41,10 @@ public class MedicationStatement {
         this.status= status;
         this.subject=subject;
         this.taken=taken;
+        this.context=context;
+        this.category=category;
+        this.effective=effective;
+
 
 
 
@@ -72,35 +77,35 @@ public class MedicationStatement {
         dosage.add(newDosage);
     }
 
-    public void setTaken(boolean taken) {
+    public void setTaken(String taken) {
         this.taken = taken;
     }
 
-    public void setSubject(boolean subject) {
+    public void setSubject(String subject) {
         this.subject = subject;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public void setMedication(boolean medication) {
+    public void setMedication(String medication) {
         this.medication = medication;
     }
 
-    public void setContext(boolean context) {
+    public void setContext(String context) {
         this.context = context;
     }
 
-    public void setEffective(boolean effective) {
+    public void setEffective(String effective) {
         this.effective = effective;
     }
 
-    public void setDateAsserted(int dateAsserted) {
+    public void setDateAsserted(Date dateAsserted) {
         this.dateAsserted = dateAsserted;
     }
 
-    public void setCategory(boolean category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
@@ -108,35 +113,35 @@ public class MedicationStatement {
         this.informationSource = informationSource;
     }
 
-    public boolean isCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public boolean isTaken() {
-        return taken;
-    }
-
-    public boolean isContext() {
+    public String getContext() {
         return context;
     }
 
-    public boolean isSubject() {
-        return subject;
-    }
-
-    public boolean isEffective() {
+    public String getEffective() {
         return effective;
     }
 
-    public boolean isMedication() {
+    public String getMedication() {
         return medication;
     }
 
-    public boolean isStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public int getDateAsserted() {
+    public String getSubject() {
+        return subject;
+    }
+
+    public String getTaken() {
+        return taken;
+    }
+
+    public Date getDateAsserted() {
         return dateAsserted;
     }
 
@@ -245,31 +250,31 @@ public class MedicationStatement {
     public void removeDosageIndex(int i){
         dosage.remove(i);
     }
-    public void removeIdentifier(List<Long> identifier){
-        identifier.remove(identifier);
+    public void removeIdentifierObject(Long identifier){
+        this.identifier.remove(identifier);
     }
-    public void removeBesedOn(List<String> basedOn){
-        basedOn.remove(basedOn);
+    public void removeBesedOnObject(String basedOn){
+        this.basedOn.remove(basedOn);
     }
-    public void removePartOf(List<String> partOf){
-        partOf.remove(partOf);
+    public void removePartOfObject(String partOf){
+        this.partOf.remove(partOf);
     }
-    public void removeDerivedFrom(List<String> derivedForm){
-        derivedForm.remove(derivedForm);
+    public void removeDerivedFromObject(String derivedForm){
+        this.derivedForm.remove(derivedForm);
     }
-    public void removeReasonNotTaken(List<String> reasonNotTaken){
-        reasonNotTaken.remove(reasonNotTaken);
+    public void removeReasonNotTakenObject(String reasonNotTaken){
+        this.reasonNotTaken.remove(reasonNotTaken);
     }
-    public void removeReasonCode(List<String> reasonCode){
-        reasonCode.remove(reasonCode);
+    public void removeReasonCodeObject(String reasonCode){
+        this.reasonCode.remove(reasonCode);
     }
-    public void removeReasopnReference(List<String> reasonReference){
-        reasonReference.remove(reasonReference);
-    }public void removeNote(List<String> note){
-        note.remove(note);
+    public void removeReasopnReference(String reasonReference){
+        this.reasonReference.remove(reasonReference);
+    }public void removeNote(String note){
+        this.note.remove(note);
     }
-    public void removeDosage(List<String> dosage){
-        dosage.remove(dosage);
+    public void removeDosage(String dosage){
+        this.dosage.remove(dosage);
     }
 }
 
