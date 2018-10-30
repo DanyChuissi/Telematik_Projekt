@@ -10,3 +10,4 @@ nb-configuration.xml
 *.iws
 *.iml
 *.ipr
+out/
