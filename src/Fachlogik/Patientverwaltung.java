@@ -40,7 +40,7 @@ public class Patientverwaltung {
     public Patient suchePatientMitID(int id){
         Patient p = null;
         for(int i = 0; i< patientenList.size(); i++)
-            if (patientenList.get(i).getID() == id) {
+            if (patientenList.get(i).getIdentifier() == id) {
                 p = patientenList.get(i);
                 break;
             }
@@ -59,12 +59,12 @@ public class Patientverwaltung {
 
     public void patientEntlassen(Patient p){
         p.setEntlassungsDatum(today);
-        p.setEntlass-Status(true);
+        p.setEnlassungStatus(true);
     }
 
     public void setAufnahmedatum(Patient p){
         String date = DATE_FORMAT.format(today);
-        p.setAufnahmeDatum(date);
+        p.setAufnahmeDatum(today);
     }
 
 }
