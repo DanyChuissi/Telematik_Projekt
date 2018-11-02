@@ -13,7 +13,7 @@ import java.util.List;
 public class Patientverwaltung {
     private List<Patient> patientenList;
     private Date today = new Date();
-    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("DD-MM-YYYY");
+    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("YYYY-MM-DD");
 
 
     public Patientverwaltung(){
@@ -67,4 +67,11 @@ public class Patientverwaltung {
         p.setAufnahmeDatum(today);
     }
 
+    public List<Patient> getPatientenList() {
+        return patientenList;
+    }
+
+    public void setPatientenList(List<Patient> patientenList) {
+        this.patientenList = patientenList;
+    }
 }
