@@ -64,6 +64,10 @@ public class PatientenverwaltungGUI extends Application {
         labelpd.setFont(new Font("Arial", 20));
         tvPatient.setEditable(true);
 
+        TableColumn identifierCol = new TableColumn("ID");
+        identifierCol.setMinWidth(10);
+        identifierCol.setCellValueFactory(new PropertyValueFactory<>("identifier"));
+
         TableColumn<Patient, String> firstNameCol = new TableColumn<Patient, String>("Name");
         firstNameCol.setMinWidth(100);
         firstNameCol.setCellValueFactory(new PropertyValueFactory("name"));
@@ -84,7 +88,7 @@ public class PatientenverwaltungGUI extends Application {
         aufnahmedatumCol.setMinWidth(75);
         aufnahmedatumCol.setCellValueFactory(new PropertyValueFactory<>("Aufnahmedatum"));
 
-        tvPatient.getColumns().addAll(firstNameCol,lastNameCol,gebDatumCol, adresseCol, aufnahmedatumCol);
+        tvPatient.getColumns().addAll(identifierCol,firstNameCol,lastNameCol,gebDatumCol, adresseCol, aufnahmedatumCol);
 
         final VBox vboxP = new VBox();
         vboxP.setSpacing(5);
@@ -110,6 +114,8 @@ public class PatientenverwaltungGUI extends Application {
         final Label labelm = new Label("Medikamente Statment");
         labelm.setFont(new Font("Arial", 20));
         tvMedikamente.setEditable(true);
+
+
 
         TableColumn medNameCol = new TableColumn("Name");
         medNameCol.setMinWidth(100);

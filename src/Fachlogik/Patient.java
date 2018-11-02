@@ -11,6 +11,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class Patient {
 
@@ -35,10 +36,12 @@ public class Patient {
     private List<MedicationStatement> medicament;
     private  boolean enlassungStatus;
     private String gender;
+    Random rand = new Random();
 
     public Patient()
     {
         medicament = new LinkedList<MedicationStatement>();
+        identifier = rand.nextInt(10);
     }
 
     public Date stringToDate(String input) throws ParseException {
