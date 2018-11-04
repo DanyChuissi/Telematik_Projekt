@@ -16,7 +16,7 @@ public class Controller {
     private TableView tvMed;
     private ObservableList obsList;
     private ObservableList obsListMed;
-    private Medikament[] m;
+    private Medikament[] medList;
 
     public Controller(TableView tv){
         this.tv = tv;
@@ -26,7 +26,7 @@ public class Controller {
         obsListMed = FXCollections.observableArrayList();
         tv.setItems(obsList);
         tvMed.setItems(obsListMed);
-        this.m = this.MedikamentList();
+        this.medList = this.MedikamentList();
 
     }
 
@@ -43,13 +43,15 @@ public class Controller {
 
     public Medikament[] MedikamentList(){
         Medikament m1 = new Medikament();
+        m1.setName("Ibuprofene");
         m1.setStatus("active");
         m1.setForm("Tablet");
         m1.setManufacturer("Bayer");
-        m1.setOverCounter(false);
+        m1.setOverCounter(true);
         m1.setCode("Code1");
 
         Medikament m2 = new Medikament();
+        m2.setName("Aspirine");
         m2.setStatus("inactive");
         m2.setForm("Capsule");
         m2.setManufacturer("Siemens");
@@ -58,6 +60,7 @@ public class Controller {
         Medikament[] m = {m1,m2};
         return m;
     }
+
 
     public void testDatenladen(){
 
@@ -82,10 +85,16 @@ public class Controller {
         obsListMed.add(p.getMedicament());
 
     }
-    public void setTableview( TableView tv, Patient p){
+    public void setMedTableview( TableView tv, Patient p){
         tvMed = tv;
         tvMed.getItems().clear();;
         tvMed.getItems().addAll(p.getMedicament());
+    }
+    public void setPatTableview(){
+        tv.getItems().clear();
+        tvMed.getItems().clear();
+
+        tv.getItems().addAll(pv.getPatientenList());
     }
     public void setGrid(Patient p){
 

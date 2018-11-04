@@ -64,6 +64,7 @@ public class Patientverwaltung {
 
     public void setAufnahmedatum(Patient p){
         String date = DATE_FORMAT.format(today);
+        p.setAufnahmeDatumS(DATE_FORMAT.format(today));
         p.setAufnahmeDatum(today);
     }
 

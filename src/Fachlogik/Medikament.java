@@ -1,6 +1,7 @@
 package src.Fachlogik;
 
 public class Medikament {
+    private int MedID;
     private String name;
     private String code; // SNOMED Code
     private boolean isOverCounter; // if require prescription
@@ -18,6 +19,14 @@ public class Medikament {
 
     public String getName() {
         return name;
+    }
+
+    public void setMedID(int medID) {
+        MedID = medID;
+    }
+
+    public int getMedID() {
+        return MedID;
     }
 
     @Override

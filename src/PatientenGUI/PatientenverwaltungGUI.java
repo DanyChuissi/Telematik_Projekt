@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import src.Fachlogik.MedicationStatement;
+import src.Fachlogik.Medikament;
 import src.Fachlogik.Patient;
 
 
@@ -21,6 +22,7 @@ public class PatientenverwaltungGUI extends Application {
     private Controller control;
     private Button updateMed = new Button();
     private Button updatePatient = new Button();
+    private Patient patient = null;
 
     public void start(Stage primaryStage){
         control = new Controller(tvPatient);
@@ -70,23 +72,23 @@ public class PatientenverwaltungGUI extends Application {
 
         TableColumn<Patient, String> firstNameCol = new TableColumn<Patient, String>("Name");
         firstNameCol.setMinWidth(100);
-        firstNameCol.setCellValueFactory(new PropertyValueFactory("name"));
+        firstNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         TableColumn<Patient, String> lastNameCol = new TableColumn<>("Vorname");
         lastNameCol.setMinWidth(100);
         lastNameCol.setCellValueFactory(new PropertyValueFactory<>("vorname"));
 
-        TableColumn gebDatumCol = new TableColumn("Geburtsdatum");
+        TableColumn<Patient, String> gebDatumCol = new TableColumn<>("Geburtsdatum");
         gebDatumCol.setMinWidth(75);
-        gebDatumCol.setCellValueFactory(new PropertyValueFactory<>("Geburtsdatum"));
+        gebDatumCol.setCellValueFactory(new PropertyValueFactory<>("geburtsdatumS"));
 
-        TableColumn adresseCol = new TableColumn("Adresse");
+        TableColumn<Patient, String> adresseCol = new TableColumn<>("Adresse");
         adresseCol.setMinWidth(200);
         adresseCol.setCellValueFactory(new PropertyValueFactory<>("Adresse"));
 
-        TableColumn aufnahmedatumCol = new TableColumn("Aufnahmedatum");
+        TableColumn<Patient, String> aufnahmedatumCol = new TableColumn<>("Aufnahmedatum");
         aufnahmedatumCol.setMinWidth(75);
-        aufnahmedatumCol.setCellValueFactory(new PropertyValueFactory<>("Aufnahmedatum"));
+        aufnahmedatumCol.setCellValueFactory(new PropertyValueFactory<>("aufnahmeDatumS"));
 
         tvPatient.getColumns().addAll(identifierCol,firstNameCol,lastNameCol,gebDatumCol, adresseCol, aufnahmedatumCol);
 
@@ -119,7 +121,7 @@ public class PatientenverwaltungGUI extends Application {
 
         TableColumn medNameCol = new TableColumn("Name");
         medNameCol.setMinWidth(100);
-        medNameCol.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        medNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         TableColumn dosageCol = new TableColumn("Dosage");
         dosageCol.setMinWidth(100);
@@ -135,7 +137,7 @@ public class PatientenverwaltungGUI extends Application {
 
         TableColumn formCol = new TableColumn("Form");
         formCol.setMinWidth(100);
-        formCol.setCellValueFactory(new PropertyValueFactory<>("Form"));
+        formCol.setCellValueFactory(new PropertyValueFactory<>("form"));
 
         TableColumn prescriptCol = new TableColumn("Prescription");
         prescriptCol.setMinWidth(100);
@@ -146,10 +148,10 @@ public class PatientenverwaltungGUI extends Application {
         manufacturerCol.setCellValueFactory(new PropertyValueFactory<>("manufacturer"));
 
         TableColumn noteCol = new TableColumn("Note");
-        noteCol.setMinWidth(100);
+        noteCol.setMinWidth(200);
         noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
-        tvMedikamente.getColumns().addAll(medNameCol,statutCol,dosageCol,periodeCol, formCol, prescriptCol, manufacturerCol);
+        tvMedikamente.getColumns().addAll(medNameCol,statutCol,dosageCol,periodeCol, formCol, prescriptCol, manufacturerCol, noteCol);
 
         final VBox vboxM = new VBox();
         vboxM.setSpacing(5);
@@ -159,8 +161,9 @@ public class PatientenverwaltungGUI extends Application {
 
         topBp.setPrefSize(1000, 50);
 
-        linkBp.setPrefSize(600, 400);
+        linkBp.setPrefSize(650, 400);
         mitteBp.setPadding(new Insets(15,12,15,12));
+        rechtBp.setPrefSize(350,400);
 
         bottomBp.setPrefSize(1000, 200);
         bottomBp.setPadding(new Insets(15,12,15,12));
@@ -173,38 +176,56 @@ public class PatientenverwaltungGUI extends Application {
         hauptBp.setBottom(bottomBp);
 
         neuPatient.setOnAction(e -> {
-           // MedikanmenteverwaltungGUI mv = new MedikanmenteverwaltungGUI(primaryStage);
-           // mv.showView();
-
-            PateintenDatenGUI pv = new PateintenDatenGUI(primaryStage, control);
+            PatientenDatenGUI pv = new PatientenDatenGUI(primaryStage, control, null);
             pv.showView();
         });
+
 
         // OnMouseCliked
         tvPatient.setOnMouseClicked(new ListViewHandler() {
             @Override
             public void handle(javafx.scene.input.MouseEvent event) {
                 Object o = tvPatient.getSelectionModel().getSelectedItem();
-                if(o instanceof Patient){
+                if (o instanceof Patient) {
 
-                    Patient neu = (Patient) tvPatient.getSelectionModel().getSelectedItem();
-                    grid = getGrid(neu);
+                    patient = (Patient) o;
+                    grid = getGrid(patient);
                     vboxPd.getChildren().setAll(labelpd, grid);
-                    control.setTableview(tvMedikamente, neu);
+                    rechtBp.setCenter(vboxPd);
+                    control.setMedTableview(tvMedikamente, patient);
                     //vboxM.getChildren().setAll()
 
 
                     updateMed.setOnAction(e -> {
-                        MedikanmenteverwaltungGUI mv = new MedikanmenteverwaltungGUI(primaryStage, neu, control);
+                        MedikanmenteverwaltungGUI mv = new MedikanmenteverwaltungGUI(primaryStage, patient, control, null);
                         mv.showView(tvMedikamente);
-                       ;
+                        ;
                     });
+                    updatePatient.setOnAction(e -> {
+                        PatientenDatenGUI pv = new PatientenDatenGUI(primaryStage, control, patient);
+                        pv.showView();
+                    });
+                    tvMedikamente.setOnMouseClicked(new ListViewHandler() {
+                        @Override
+                        public void handle(javafx.scene.input.MouseEvent event) {
+                            Object o = tvMedikamente.getSelectionModel().getSelectedItem();
+                            if(o instanceof MedicationStatement){
 
+                                MedicationStatement medS = (MedicationStatement) o;
+                                MedikanmenteverwaltungGUI mv= new MedikanmenteverwaltungGUI(primaryStage,patient, control, medS);
+                                mv.showView(tvMedikamente);
+                            }
+                        }
 
+                    });
                 }
             }
-
         });
+
+       // if(patient != null){ }
+
+
+
 
 
 
@@ -225,20 +246,21 @@ public class PatientenverwaltungGUI extends Application {
 
         Label name = new Label("Name");
         Label vorname = new Label("Vorname");
+        Label idnummer = new Label("Id Nummer");
         Label gebDatum = new Label("GeburtsDatum");
         Label strasse = new Label("Strasse, H-nummer");
         Label stadt = new Label("Plz- Stadt");
-        Label telefon = new Label("Telefon");
         Label gender = new Label("Gender");
         Label deseaded = new Label("Gestorben");
         Label activ = new Label("Daten in Benutzung");
         Label tel = new Label("Telefon");
         Label aufnahemeD = new Label("AufnahmeDatum");
         Label entlassd = new Label("Datum der Entlassung");
-        //Label  = new Label("Ort");
+
 
         Label nameV = new Label(""+p.getName());
         Label vornameV = new Label(""+p.getVorname());
+        Label idnummerV = new Label(""+p.getIdentifier());
         Label gebDatumV = new Label(""+p.getGeburtsdatumS());
         Label strasseV = new Label(p.getStreet()+", "+p.getHousenumber());
         Label stadtV = new Label(p.getPostalcode()+", "+p.getLocation());
@@ -250,11 +272,10 @@ public class PatientenverwaltungGUI extends Application {
         Label entlassdV = new Label(""+p.getEntlassungsdatum());
 
         Button updateMed = new Button("Medicament Verwalten");
-        //Button  = new Button("Neu");
         Button updateDaten = new Button("Daten Verwalten");
 
         this.updateMed = updateMed;
-        this.updatePatient = updatePatient;
+        this.updatePatient = updateDaten;
 
         HBox hb = new HBox();
         hb.setSpacing(10.0);
@@ -263,45 +284,40 @@ public class PatientenverwaltungGUI extends Application {
 
         grid.add(name, 0, 0);
         grid.add(vorname, 0, 1);
-        grid.add(gebDatum, 0, 2);
-        grid.add(strasse, 0, 3);
-        grid.add(stadt, 0, 4);
-        grid.add(tel, 0, 5);
-        grid.add(gender, 0, 6);
-        grid.add(deseaded, 0, 7);
-        grid.add(activ, 0, 8);
-        //grid.add(tel, 0, 9);
-        grid.add(aufnahemeD, 0, 9);
-        grid.add(entlassd, 0, 10);
+        grid.add(idnummer, 0, 2);
+        grid.add(gebDatum, 0, 3);
+        grid.add(strasse, 0, 4);
+        grid.add(stadt, 0, 5);
+        grid.add(tel, 0, 6);
+        grid.add(gender, 0, 7);
+        grid.add(deseaded, 0, 8);
+        grid.add(activ, 0, 9);
+        grid.add(aufnahemeD, 0, 10);
+        grid.add(entlassd, 0, 11);
 
         //grid.add(status, 0, 4);
 
         grid.add(nameV, 1, 0);
         grid.add(vornameV, 1, 1);
-        grid.add(gebDatumV, 1, 2);
-        grid.add(strasseV, 1, 3);
-        grid.add(stadtV, 1, 4);
-        grid.add(telV, 1, 5);
-        grid.add(genderV, 1, 6);
-        grid.add(deseadedV, 1, 7);
-        grid.add(activV, 1, 8);
-        //grid.add(telV, 1, 9);
-        grid.add(aufnahemeDV, 1, 9);
-        grid.add(entlassdV, 1, 10);
+        grid.add(idnummerV, 1, 2);
+        grid.add(gebDatumV, 1, 3);
+        grid.add(strasseV, 1, 4);
+        grid.add(stadtV, 1, 5);
+        grid.add(telV, 1, 6);
+        grid.add(genderV, 1, 7);
+        grid.add(deseadedV, 1, 8);
+        grid.add(activV, 1, 9);
+        grid.add(aufnahemeDV, 1, 10);
+        grid.add(entlassdV, 1, 11);
 
-
-        ComboBox<String> myComboBox = new ComboBox<String>();
-        myComboBox.getItems().addAll("Dortmund","Hagen","Essen","Köln","Wuppertal");
-        //grid.add(myComboBox, 1, 6);
-
-        grid.add(hb, 1, 11);
+        grid.add(hb, 1, 12);
 
 
        // GridPane.setHgrow(tfname, Priority.ALWAYS);
       //  GridPane.setHgrow(tfvor, Priority.NEVER);
       //  GridPane.setHgrow(tfgebD, Priority.ALWAYS);
-        GridPane.setHgrow(name, Priority.ALWAYS);
-        GridPane.setHgrow(hb, Priority.ALWAYS);
+       // GridPane.setHgrow(name, Priority.ALWAYS);
+        //GridPane.setHgrow(hb, Priority.ALWAYS);
         //GridPane.setHalignment(b1, HPos.CENTER);
         GridPane.setValignment(updateDaten, VPos.BOTTOM);
         return grid;

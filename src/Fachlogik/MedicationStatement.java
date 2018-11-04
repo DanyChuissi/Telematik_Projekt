@@ -7,11 +7,6 @@ import java.util.Date;
 public class MedicationStatement {
     private Patient patient;
     private Medikament medikament;
-    private String identifier;
-    private String BasedOn; // (MedicationRequest | CarePlan | ProcedureRequest | ReferralRequest)
-    private String partOf; // (MedicationAdministration | MedicationDispense | MedicationStatement | Procedure | Observation)
-    private String context; // (Encounter | EpisodeOfCare)
-    private Date dateAsserted;
     private String taken; // y | n | unk | na
     private String note;
     private String dosage;
@@ -19,24 +14,7 @@ public class MedicationStatement {
     private String form;
     private String name;
     private String manufacturer;
-
-    public void setForm(String form) {
-        this.form = form;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public void setPresciption(boolean presciption) {
-        this.presciption = presciption;
-    }
-
-    private boolean presciption;
+    private boolean prescription;
     private String status; //active | completed | entered-in-error | intended | stopped | on-hold
     private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("YYYY-MM-DD");
 
@@ -51,27 +29,47 @@ public class MedicationStatement {
 
     }
 
+    public void setForm(String form) {
+        this.form = form;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public void setPrescription(boolean prescription) {
+        this.prescription = prescription;
+    }
+
+    public boolean isPrescription() {
+        return prescription;
+    }
     public String getForm() {
-        return medikament.getForm();
+        return this.form;
     }
 
     public String getName() {
-        return medikament.getName();
+        return this.name;
     }
 
     public String getManufacturer() {
-        return medikament.getManufacturer();
+        return this.manufacturer;
     }
 
     public boolean isPresciption() {
-        return medikament.isOverCounter();
+        return this.isPresciption();
     }
 
-    public void setPeriode(String von, String bis) {
-        periode =   von+ " bis "+ bis;
+    public void setPeriode(String periode) {
+        this.periode = periode;
+    }
 
+    public void setPeriodevonbis(String von, String bis) {
+        periode =   von+ " bis "+ bis;
     }
 
     public String getPeriode() {
@@ -94,29 +92,10 @@ public class MedicationStatement {
         return patient;
     }
 
-    public String getIdentifier() {
-        return identifier;
-    }
 
-    public String getBasedOn() {
-        return BasedOn;
-    }
-
-    public String getPartOf() {
-        return partOf;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public Date getDateAsserted() {
-        return dateAsserted;
-    }
     public Date stringToDate(String input) throws ParseException {
         return DATE_FORMAT.parse(input);
     }
-
     public String getTaken() {
         return taken;
     }
@@ -137,25 +116,6 @@ public class MedicationStatement {
         this.medikament = medikament;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public void setBasedOn(String basedOn) {
-        BasedOn = basedOn;
-    }
-
-    public void setPartOf(String partOf) {
-        this.partOf = partOf;
-    }
-
-    public void setContext(String context) {
-        this.context = context;
-    }
-
-    public void setDateAsserted(Date dateAsserted) {
-        this.dateAsserted = dateAsserted;
-    }
 
     public void setTaken(String taken) {
         this.taken = taken;

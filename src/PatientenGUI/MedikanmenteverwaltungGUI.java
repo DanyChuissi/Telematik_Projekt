@@ -14,18 +14,23 @@ import src.Fachlogik.MedicationStatement;
 import src.Fachlogik.Medikament;
 import src.Fachlogik.Patient;
 
+import javax.swing.*;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Formatter;
 
 public class MedikanmenteverwaltungGUI extends Stage {
     private Stage primaryStage;
     private Patient patient;
     private Controller control;
-    private Medikament med = new Medikament();
+    private MedicationStatement medS;
 
-    public MedikanmenteverwaltungGUI(Stage primaryStage, Patient patient, Controller control) {
+
+    public MedikanmenteverwaltungGUI(Stage primaryStage, Patient patient, Controller control, MedicationStatement medS) {
         this.primaryStage = primaryStage;
         this.patient = patient;
         this.control = control;
+        this.medS = medS;
     }
 
 
@@ -37,6 +42,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
             grid.setHgap(10.0);
 
             Label namePatient = new Label("Patient");
+            Label idPatient = new Label("Id Patient)");
             Label code = new Label("Code");
             Label dose = new Label("Dose");
             Label von = new Label("Annehmen von");
@@ -47,6 +53,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
 
 
             Label pName = new Label(patient.getName()+", "+patient.getVorname());
+            Label idV = new Label (""+patient.getIdentifier());
             ComboBox<String> codeComboBox = new ComboBox<String>();
             for(int i = 0; i < control.MedikamentList().length; i++){
                 codeComboBox.getItems().add(control.MedikamentList()[i].toString());
@@ -75,46 +82,97 @@ public class MedikanmenteverwaltungGUI extends Stage {
 
 
             grid.add(namePatient, 0, 0);
-            grid.add(code, 0, 1);
-            grid.add(dose, 0, 2);
-            grid.add(von, 0, 3);
-            grid.add(bis, 0, 4);
-            grid.add(taken, 0, 5);
-            grid.add(status, 0, 6);
-            grid.add(note, 0, 7);
+            grid.add(idPatient, 0, 1);
+            grid.add(code, 0, 2);
+            grid.add(dose, 0, 3);
+            grid.add(von, 0, 4);
+            grid.add(bis, 0, 5);
+            grid.add(taken, 0, 6);
+            grid.add(status, 0, 7);
+            grid.add(note, 0, 9);
 
             grid.add(pName, 1, 0);
-            grid.add(codeComboBox, 1, 1);
+            grid.add(idV, 1, 1);
+            grid.add(codeComboBox, 1, 2);
+            grid.add(dosageComboBox, 1, 3);
+            grid.add(vonV, 1, 4);
+            grid.add(bisV, 1, 5);
+            grid.add(takenComboBox, 1, 6);
+            grid.add(statusComboBox, 1, 7);
+            grid.add(noteV, 1, 9);
 
-            grid.add(dosageComboBox, 1, 2);
-            grid.add(vonV, 1, 3);
-            grid.add(bisV, 1, 4);
-            grid.add(takenComboBox, 1, 5);
-            grid.add(statusComboBox, 1, 6);
-            grid.add(noteV, 1, 7);
+            grid.add(hb, 1, 10);
 
-            grid.add(hb, 1, 8);
+            if(medS != null){
+                codeComboBox.setValue(medS.getMedikament().getCode());
+                dosageComboBox.setValue(medS.getDosage());
+                //vonV.setValue(medS.g.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                takenComboBox.setValue(medS.getTaken());
+                statusComboBox.setValue(medS.getStatus());
+                noteV.setText(medS.getNote());
 
-
-            save.setOnAction(e -> {
-                for(int i = 0; i< control.MedikamentList().length; i++){
-                    if(codeComboBox.getValue().toString().equals(control.MedikamentList()[i])){
-                        med = control.MedikamentList()[i];
+                save.setOnAction(e -> {
+                    Medikament med = new Medikament();
+                    if(!codeComboBox.getValue().isEmpty() && !takenComboBox.getValue().isEmpty() && !statusComboBox.getValue().isEmpty()) {
+                    for(int i = 0; i< control.MedikamentList().length; i++){
+                        if(codeComboBox.getValue().equals(control.MedikamentList()[i].getCode())){
+                            med = control.MedikamentList()[i];
+                        }
                     }
-                }
+                    if(med != medS.getMedikament()){
+                        medS.setForm(med.getForm());
+                        medS.setManufacturer(med.getManufacturer());
+                        medS.setName(med.getName());
+                        medS.setPrescription(med.isOverCounter());
+                    }
 
-                MedicationStatement medS = new MedicationStatement(patient,med, takenComboBox.getValue().toString(), statusComboBox.getValue().toString());
-                medS.setForm(med.getForm());
-                medS.setManufacturer(med.getManufacturer());
-                medS.setName(med.getName());
-                medS.setPeriode(vonV.getValue().toString(), bisV.getValue().toString());
-                medS.setDosage(dosageComboBox.getValue());
-                patient.addMedStatment(medS);
-                control.setTableview( tv, patient);
-                close();
-                    });
+                        medS.setPeriode(vonV.getValue().toString(), bisV.getValue().toString());
+                        medS.setDosage(dosageComboBox.getValue());
+                        medS.setNote(noteV.getText());
+                        //patient.addMedStatment(medS);
+                        control.setMedTableview(tv, patient);
+                        close();
+                    }else{
+                        Formatter formatter = new Formatter();
+                        formatter.format("Name oder Vorname ist Leer");
 
+                        JOptionPane.showMessageDialog(null, formatter.toString());
+                        formatter.close();
+                    }
+                });
+            }
+            else {
 
+                save.setOnAction(e -> {
+                    Medikament med = new Medikament();
+                     if(!codeComboBox.getValue().isEmpty() && !takenComboBox.getValue().isEmpty() && !statusComboBox.getValue().isEmpty()) {
+                    for (int i = 0; i < control.MedikamentList().length; i++) {
+                        if (codeComboBox.getValue().equals(control.MedikamentList()[i].getCode())) {
+                            med = control.MedikamentList()[i];
+                        }
+                    }
+
+                        MedicationStatement medS = new MedicationStatement(patient, med, takenComboBox.getValue(), statusComboBox.getValue());
+                        medS.setForm(med.getForm());
+                        medS.setManufacturer(med.getManufacturer());
+                        medS.setName(med.getName());
+                        medS.setPeriode(vonV.getValue().toString(), bisV.getValue().toString());
+                        medS.setDosage(dosageComboBox.getValue());
+                        medS.setNote(noteV.getText());
+                        medS.setPrescription(med.isOverCounter());
+                        patient.addMedStatment(medS);
+                        control.setMedTableview(tv, patient);
+                        close();
+                    }else{
+                        Formatter formatter = new Formatter();
+                        formatter.format("Name oder Vorname ist Leer");
+
+                        JOptionPane.showMessageDialog(null, formatter.toString());
+                        formatter.close();
+                    }
+                });
+
+            }
             GridPane.setHgrow(pName, Priority.ALWAYS);
             GridPane.setHgrow(code, Priority.NEVER);
             GridPane.setHgrow(vonV, Priority.ALWAYS);

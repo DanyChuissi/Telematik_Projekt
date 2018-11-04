@@ -1,17 +1,18 @@
 package src.Fachlogik;
 
-import javafx.beans.property.StringProperty;
-import src.PatientenGUI.MedikanmenteverwaltungGUI;
+        import javafx.beans.property.StringProperty;
+        import src.PatientenGUI.MedikanmenteverwaltungGUI;
+        import src.PatientenGUI.NichtErlaubException;
 
-import javax.swing.plaf.metal.MetalDesktopIconUI;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Date;
+        import javax.swing.plaf.metal.MetalDesktopIconUI;
+        import java.text.DateFormat;
+        import java.text.ParseException;
+        import java.util.Date;
 
-import java.text.SimpleDateFormat;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+        import java.text.SimpleDateFormat;
+        import java.util.LinkedList;
+        import java.util.List;
+        import java.util.Random;
 
 public class Patient {
 
@@ -44,11 +45,39 @@ public class Patient {
         identifier = rand.nextInt(10);
     }
 
-    public Date stringToDate(String input) throws ParseException {
-            return DATE_FORMAT.parse(input);
+
+    public void setGeburtsdatum(Date geburtsdatum) {
+        this.geburtsdatum = geburtsdatum;
     }
-    public void setGender(String gender) {
-        this.gender = gender;
+
+    public void setGeburtsdatumS(String geburtsdatumS) {
+        this.geburtsdatumS = geburtsdatumS;
+    }
+
+    public void setAufnahmeDatumS(String aufnahmeDatumS) {
+        this.aufnahmeDatumS = aufnahmeDatumS;
+    }
+
+    public void setEntlassungsDatumS(String entlassungsDatumS) {
+        this.entlassungsDatumS = entlassungsDatumS;
+    }
+
+    public void setMedicament(List<MedicationStatement> medicament) {
+        this.medicament = medicament;
+    }
+
+
+
+
+    public Date stringToDate(String input) throws ParseException {
+        return DATE_FORMAT.parse(input);
+    }
+    public void setGender(String gender) throws NichtErlaubException {
+        if(gender =="male" ||gender =="female" || gender =="other" || gender =="unknown" || gender.isEmpty())
+            this.gender = gender;
+        else{
+            throw new NichtErlaubException();
+        }
     }
 
     public String getGender(){
@@ -236,5 +265,6 @@ public class Patient {
     public String getAdresse(){
         return String.format("%s %d, %d %s", this.getStreet(), this.getHousenumber(),this.getPostalcode(),this.getLocation());
     }
+
 }
 
