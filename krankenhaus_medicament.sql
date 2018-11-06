@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.9, for Win32 (AMD64)
+-- MySQL dump 10.13  Distrib 5.7.12, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: krankenhaus
 -- ------------------------------------------------------
--- Server version	5.5.5-10.1.36-MariaDB
+-- Server version	5.7.17-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS `medicament`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `medicament` (
   `MeID` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
   `code` varchar(255) DEFAULT NULL,
   `isOvercounter` tinyint(1) DEFAULT NULL,
   `form` varchar(255) DEFAULT NULL,
@@ -39,7 +40,7 @@ CREATE TABLE `medicament` (
 
 LOCK TABLES `medicament` WRITE;
 /*!40000 ALTER TABLE `medicament` DISABLE KEYS */;
-INSERT INTO `medicament` VALUES (1,'CE$567',1,'capsul','BorisApotheque','Activ'),(2,'CE$568',1,'capsul','BorisApotheque','Activ'),(3,'CE$569',1,'capsul1','BorisApotheque','Activ'),(4,'CE$5610',1,'capsul2','BorisApotheque','Activ'),(5,'CE$5611',1,'capsul3','BorisApotheque','Activ'),(6,'CE$5612',1,'capsul4','BorisApotheque','Activ'),(7,'CE$5613',1,'capsul5','BorisApotheque','Activ');
+INSERT INTO `medicament` VALUES (1,'ABILIFY 10 mg Tabletten','CE$567',1,'Tabletten','axicorp Pharma GmbH','activ'),(2,'BALDRIAN TEE','CE$568',0,'Capsul','Biologische Heilmittel Heel GmbH','inactif'),(3,'BACTERIUM COLI','CE$569',1,'Saft','Vita Natura GmbH & Co. KG','activ'),(4,'IBERIS amara LM 13 Dilution','CE$5610',1,'Powder','ARCANA Dr. Sewerin GmbH','activ'),(5,'TALOXA Saft','CE$5611',1,'Saft','Kohlpharma GmbH','entered-in-error'),(6,'TAMBOCOR Tabletten','CE$5612',1,'Tablette','MEDA Pharma GmbH','activ'),(7,'XALACOM','CE$5613',1,'Augentropfen','EMRA-MED Arzneimittel GmbH','activ');
 /*!40000 ALTER TABLE `medicament` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-04 19:30:25
+-- Dump completed on 2018-11-06 10:45:32

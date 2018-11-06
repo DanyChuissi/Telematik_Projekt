@@ -1,18 +1,13 @@
 package src.Fachlogik;
 
-        import javafx.beans.property.StringProperty;
-        import src.PatientenGUI.MedikanmenteverwaltungGUI;
-        import src.PatientenGUI.NichtErlaubException;
 
-        import javax.swing.plaf.metal.MetalDesktopIconUI;
-        import java.text.DateFormat;
+        import src.PatientenGUI.NichtErlaubException;
         import java.text.ParseException;
         import java.util.Date;
-
         import java.text.SimpleDateFormat;
         import java.util.LinkedList;
         import java.util.List;
-        import java.util.Random;
+
 
 public class Patient {
 
@@ -20,33 +15,31 @@ public class Patient {
     private boolean active = false;
     private String name;
     private String vorname;
-    private int telefon;
-    private Date geburtsdatum ;
+    private String telefon;
+    private java.sql.Date geburtsdatum ;
     private String geburtsdatumS ;
     private Date date = new Date();
-    private DateFormat DATE_FORMAT = new SimpleDateFormat("YYYY-MM-DD");
+    private String aufnahmeDatumS;
+    private String entlassungsDatumS;
+    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private boolean deseased;
     private String Street;
     private int Housenumber;
     private String location;
     private int postalcode;
-    private Date aufnahmeDatum;
-    private Date entlassungsDatum;
-    private String aufnahmeDatumS;
-    private String entlassungsDatumS;
+    private java.sql.Date aufnahmeDatum;
+    private java.sql.Date entlassungsDatum;
     private List<MedicationStatement> medicament;
     private  boolean enlassungStatus;
     private String gender;
-    Random rand = new Random();
 
     public Patient()
     {
         medicament = new LinkedList<MedicationStatement>();
-        identifier = rand.nextInt(10);
     }
 
 
-    public void setGeburtsdatum(Date geburtsdatum) {
+    public void setGeburtsdatum(java.sql.Date geburtsdatum) {
         this.geburtsdatum = geburtsdatum;
     }
 
@@ -59,25 +52,19 @@ public class Patient {
     }
 
     public void setEntlassungsDatumS(String entlassungsDatumS) {
-        this.entlassungsDatumS = entlassungsDatumS;
+    this.entlassungsDatumS = entlassungsDatumS;
     }
-
     public void setMedicament(List<MedicationStatement> medicament) {
         this.medicament = medicament;
     }
 
-
-
-
-    public Date stringToDate(String input) throws ParseException {
-        return DATE_FORMAT.parse(input);
+    public java.sql.Date stringToSqlDate(String st) throws ParseException {
+        Date parsed = DATE_FORMAT.parse(st);
+        java.sql.Date sql = new java.sql.Date(parsed.getTime());
+        return sql;
     }
-    public void setGender(String gender) throws NichtErlaubException {
-        if(gender =="male" ||gender =="female" || gender =="other" || gender =="unknown" || gender.isEmpty())
+    public void setGender(String gender) {
             this.gender = gender;
-        else{
-            throw new NichtErlaubException();
-        }
     }
 
     public String getGender(){
@@ -113,8 +100,6 @@ public class Patient {
         return active;
     }
 
-
-
     public void setName(String name) {
         this.name= name;
     }
@@ -134,15 +119,15 @@ public class Patient {
         return vorname;
     }
 
-    public void setTelefon(int telefon) {
-        this.telefon = telefon;
+    public void setTelefon(String telefon) throws NumberFormatException {
+            long tel = Long.parseLong(telefon);
+            this.telefon = telefon;
     }
 
-    public int getTelefon()
+    public String getTelefon()
     {
         return telefon;
     }
-
 
     public int getHousenumber() {
         return Housenumber;
@@ -152,11 +137,11 @@ public class Patient {
         Housenumber = housenumber;
     }
 
-    public Date getAufnahmeDatum() {
+    public java.sql.Date getAufnahmeDatum() {
         return aufnahmeDatum;
     }
 
-    public void setAufnahmeDatum(Date aufnahmedatum) {
+    public void setAufnahmeDatum(java.sql.Date aufnahmedatum) {
         this.aufnahmeDatum = aufnahmedatum;
     }
 
@@ -176,11 +161,11 @@ public class Patient {
         return location;
     }
 
-    public void setEntlassungsDatum(Date entlassungdatum) {
+    public void setEntlassungsDatum(java.sql.Date entlassungdatum) {
         this.entlassungsDatum = entlassungdatum;
     }
 
-    public Date getEntlassungsdatum() {
+    public java.sql.Date getEntlassungsdatum() {
         return entlassungsDatum;
     }
 
@@ -191,7 +176,6 @@ public class Patient {
     public int getPostalcode() {
         return postalcode;
     }
-
 
     public void setDeseased(boolean deseased) {
         this.deseased = deseased;
@@ -206,7 +190,6 @@ public class Patient {
         this.enlassungStatus = entlassungStatus;
     }
 
-
     public boolean getEntlassungStatus()
     {
         return enlassungStatus;
@@ -220,7 +203,7 @@ public class Patient {
         return active;
     }
 
-    public Date getGeburtsdatum() {
+    public java.sql.Date getGeburtsdatum() {
         return geburtsdatum;
     }
 
@@ -236,7 +219,7 @@ public class Patient {
         return deseased;
     }
 
-    public Date getEntlassungsDatum() {
+    public java.sql.Date getEntlassungsDatum() {
         return entlassungsDatum;
     }
 
@@ -246,25 +229,20 @@ public class Patient {
             erg = DATE_FORMAT.format(aufnahmeDatum);
         }
         return erg;
-
     }
-
     public String getEntlassungsDatumS() {
         String erg = "";
-        if(entlassungsDatum != null){
-            erg =   DATE_FORMAT.format(entlassungsDatum);
+        if (entlassungsDatum != null) {
+            erg = DATE_FORMAT.format(entlassungsDatum);
         }
         return erg;
 
     }
-
     public boolean isEnlassungStatus() {
         return enlassungStatus;
     }
-
     public String getAdresse(){
         return String.format("%s %d, %d %s", this.getStreet(), this.getHousenumber(),this.getPostalcode(),this.getLocation());
     }
-
 }
 

@@ -2,11 +2,16 @@ package src.Fachlogik;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MedicationStatement {
     private Patient patient;
+
+
     private Medikament medikament;
+    private int identifier ;
     private String taken; // y | n | unk | na
     private String note;
     private String dosage;
@@ -15,18 +20,25 @@ public class MedicationStatement {
     private String name;
     private String manufacturer;
     private boolean prescription;
-    private String status; //active | completed | entered-in-error | intended | stopped | on-hold
-    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("YYYY-MM-DD");
+    private String statusStmt; //active | completed | entered-in-error | intended | stopped | on-hold
+    private DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
 
 
     public MedicationStatement(Patient patient, Medikament medikament, String taken, String status){
         this.patient = patient;
         this.medikament = medikament;
         this.taken = taken;
-        this.status = status;
+        this.statusStmt = status;
     }
     public MedicationStatement(){
+    }
 
+    public int getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(int identifier) {
+        this.identifier = identifier;
     }
 
     public void setForm(String form) {
@@ -76,12 +88,12 @@ public class MedicationStatement {
         return periode;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatusStmt(String status) {
+        this.statusStmt = status;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStatusStmt() {
+        return this.statusStmt;
     }
 
     public Medikament getMedikament() {
@@ -92,10 +104,6 @@ public class MedicationStatement {
         return patient;
     }
 
-
-    public Date stringToDate(String input) throws ParseException {
-        return DATE_FORMAT.parse(input);
-    }
     public String getTaken() {
         return taken;
     }
@@ -115,7 +123,6 @@ public class MedicationStatement {
     public void setMedikament(Medikament medikament) {
         this.medikament = medikament;
     }
-
 
     public void setTaken(String taken) {
         this.taken = taken;

@@ -7,10 +7,9 @@ public class Medikament {
     private boolean isOverCounter; // if require prescription
     private String form; // powder | tablets | capsule +
     private String manufacturer; // Organisation
-    private String status;// active | inactive | entered-in-error
+    private String statusMed;// active | inactive | entered-in-error
 
     public Medikament(){
-
     }
 
     public void setName(String name) {
@@ -29,10 +28,10 @@ public class Medikament {
         return MedID;
     }
 
-    @Override
-    public String toString(){
-        return this.code;
-    }
+  //  @Override
+   // public String toString(){
+       // return this.code;
+  //  }
     public boolean isOverCounter() {
         return isOverCounter;
     }
@@ -49,8 +48,8 @@ public class Medikament {
         return manufacturer;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStatusMed() {
+        return statusMed;
     }
 
     public void setCode(String code) {
@@ -69,7 +68,7 @@ public class Medikament {
         isOverCounter = overCounter;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatusMed(String status) {
+        this.statusMed = status;
     }
 }

@@ -4,32 +4,52 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
-import src.Fachlogik.MedicationStatement;
-import src.Fachlogik.Medikament;
-import src.Fachlogik.Patient;
-import src.Fachlogik.Patientverwaltung;
+import src.Fachlogik.*;
+
+import java.sql.Date;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
 
-    private Patientverwaltung pv;
     private TableView tv;
     private TableView tvMed;
     private ObservableList obsList;
     private ObservableList obsListMed;
     private Medikament[] medList;
+    private Krankenhaus kr;
 
     public Controller(TableView tv){
         this.tv = tv;
         tvMed = new TableView();
-        pv = new Patientverwaltung();
         obsList = FXCollections.observableArrayList();
         obsListMed = FXCollections.observableArrayList();
         tv.setItems(obsList);
         tvMed.setItems(obsListMed);
-        this.medList = this.MedikamentList();
-
+        this.kr = new Krankenhaus();
     }
 
+    public List<Medikament> getMedikamentList(){
+        try {
+            return kr.getMedikamentList();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Patient> ladePatientDB() {
+        this.kr = new Krankenhaus();
+        kr.connect();
+        List<Patient> list = new ArrayList<>();
+        try {
+           list = kr.getpatientlist();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
     public TableView getLv() {
         return tv;
     }
@@ -38,68 +58,109 @@ public class Controller {
         this.tvMed = tv;
         tvMed.setItems(obsListMed);
         tv.getItems().addAll();
-
     }
 
-    public Medikament[] MedikamentList(){
-        Medikament m1 = new Medikament();
-        m1.setName("Ibuprofene");
-        m1.setStatus("active");
-        m1.setForm("Tablet");
-        m1.setManufacturer("Bayer");
-        m1.setOverCounter(true);
-        m1.setCode("Code1");
+    public void addPatientDB(Patient neu) throws SQLException {
+        kr.addPatientDB(neu);
 
-        Medikament m2 = new Medikament();
-        m2.setName("Aspirine");
-        m2.setStatus("inactive");
-        m2.setForm("Capsule");
-        m2.setManufacturer("Siemens");
-        m2.setOverCounter(false);
-        m2.setCode("Code2");
-        Medikament[] m = {m1,m2};
-        return m;
+        try {
+            obsList.add(kr.getLastInserted());
+        } catch (NichtErlaubException e) {
+            e.printStackTrace();
+        }
     }
 
-
-    public void testDatenladen(){
-
-
-        Patient p1 = new Patient();
-        p1.setName("Müller");
-        p1.setVorname("Max");
-
-        Patient p2 = new Patient();
-        p2.setVorname("Mario");
-        p2.setName("Baloteli");
-
-    }
-    public void addPatient(Patient neu){
-        //tv.getItems().clear();
-        pv.addPatient(neu);
-        obsList.add(neu);
-    }
-
-    public void addMedikamente(Patient p, Medikament med, String taken, String status){
-        p.addmedicament(med,taken,status);
-        obsListMed.add(p.getMedicament());
+    public void addMedikamenteDB(Patient p, Medikament med, String taken, String status, String period, String note, String dosage) throws SQLException {
+        kr.addmedikament(p, med,taken,status, period, note, dosage);
+        //obsListMed.add(p.getMedicament());
+        //setMedTableview(tv , p);
 
     }
     public void setMedTableview( TableView tv, Patient p){
-        tvMed = tv;
-        tvMed.getItems().clear();;
-        tvMed.getItems().addAll(p.getMedicament());
+       // tvMed = tv;
+        //tvMed.getItems().clear();
+       //tv.setItems(obsListMed);
+        obsListMed.add(p.getMedicament());
+
+       // tv.getItems().addAll(p.getMedicament());
+
     }
+
+    public void updatePatient(Patient patient) throws SQLException {
+        kr.updatepaDaten(patient);
+    }
+
+    public MedicationStatement updateMedDaten(MedicationStatement med) throws SQLException {
+       return  kr.updateMeDaten(med);
+    }
+
+    public void setPatTabelview(List<Patient> list){
+        tv.getItems().clear();
+        tv.getItems().addAll(list);
+    }
+
+    public void setMedtabelviewBD(TableView tv, MedicationStatement me) {
+        tvMed = tv;
+        tvMed.getItems().clear();
+        //if (p != null)
+        //try {
+        tvMed.getItems().add(me);
+        //tvMed.getItems().addAll(kr.getMediListPa(p));
+        //  } catch (SQLException e) {
+        // e.printStackTrace();
+        //} catch (NichtErlaubException e) {
+        //  e.printStackTrace();
+        //  }
+    }
+    public void setMedtabelviewBD(TableView tv, Patient p) {
+        tvMed = tv;
+        tvMed.getItems().clear();
+        if (p != null)
+        try {
+
+        tvMed.getItems().addAll(kr.getMediListPa(p));
+          } catch (SQLException e) {
+         e.printStackTrace();
+        } catch (NichtErlaubException e) {
+          e.printStackTrace();
+          }
+    }
+
     public void setPatTableview(){
         tv.getItems().clear();
         tvMed.getItems().clear();
 
-        tv.getItems().addAll(pv.getPatientenList());
+        try {
+            tv.getItems().addAll(kr.getpatientlist());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-    public void setGrid(Patient p){
 
-    }
     public Patient getPatient(int i){
-        return pv.getPatient(i);
+        try {
+            return  kr.getPatient(i);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NichtErlaubException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void conClose(){
+        try {
+            kr.connclose();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Patient> suchMitId(int i) throws SQLException, NichtErlaubException {
+        return kr.suchtPaI(i);
+    }
+
+    public List<Patient> suchMitName(String name) throws SQLException, NichtErlaubException {
+        return kr.suchtpaNa(name);
     }
 }

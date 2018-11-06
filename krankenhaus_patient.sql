@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.9, for Win32 (AMD64)
+-- MySQL dump 10.13  Distrib 5.7.12, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: krankenhaus
 -- ------------------------------------------------------
--- Server version	5.5.5-10.1.36-MariaDB
+-- Server version	5.7.17-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -28,7 +28,7 @@ CREATE TABLE `patient` (
   `vorname` varchar(255) DEFAULT NULL,
   `gender` varchar(30) DEFAULT NULL,
   `active` tinyint(1) DEFAULT NULL,
-  `telefon` int(11) DEFAULT NULL,
+  `telefon` varchar(30) DEFAULT NULL,
   `birthdate` date DEFAULT NULL,
   `deseased` tinyint(1) DEFAULT NULL,
   `Street` varchar(255) DEFAULT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE `patient` (
   `entlassungsDatum` date DEFAULT NULL,
   `entlassungStatus` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`identifier`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,7 +48,7 @@ CREATE TABLE `patient` (
 
 LOCK TABLES `patient` WRITE;
 /*!40000 ALTER TABLE `patient` DISABLE KEYS */;
-INSERT INTO `patient` VALUES (1,'boris','Tene','Herr',1,0,'2016-11-12',0,'0',NULL,'0',NULL,'2016-11-12','2016-11-12',1),(2,'Martin','Dany','Herr',1,0,'2016-11-12',0,'0',NULL,'0',NULL,'2016-11-12','2016-11-12',1),(3,'Romeo','Dany','Herr',1,0,'2016-11-12',0,'0',NULL,'0',NULL,'2016-11-12','2016-11-12',1);
+INSERT INTO `patient` VALUES (5,'Max ','Musterman','male',NULL,'017623928382','2010-11-18',0,'Allestr',2,'Dortmund',44227,'2018-11-06',NULL,0),(6,'Paul','Müller','male',NULL,'01539090989','2014-07-23',0,'Emil-Figge',4,'Dortmund',44567,'2018-11-06',NULL,0),(7,'Elsa','Edda','female',NULL,'023523339383','2014-01-17',0,'Brüxstr',34,'Essen',33245,'2018-11-06',NULL,0),(8,'Hanz','Peter','unknown',NULL,'025698494849','2014-11-06',1,'Bornstr',88,'Köln',45674,'2018-11-06',NULL,0);
 /*!40000 ALTER TABLE `patient` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -61,4 +61,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-04 19:30:26
+-- Dump completed on 2018-11-06 10:45:32
