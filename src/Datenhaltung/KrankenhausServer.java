@@ -2,13 +2,12 @@ package src.Datenhaltung;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.client.api.IRestfulClient;
+//import org.hl7.fhir.instance.model.Identifier;
 import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Medication;
+//import org.hl7.fhir.instance.model.Patient;
 import ca.uhn.fhir.jpa.dao.DaoConfig;
-import src.Fachlogik.Medikament;
-import src.Fachlogik.Patient;
 
 
 import java.util.List;
@@ -17,16 +16,16 @@ public class KrankenhausServer  {
 
     @SuppressWarnings("unused")
     public static void main(String[] args){
-//        DaoConfig dao = new DaoConfig();
-//        dao.setAllowInlineMatchUrlReferences(true);
+       // DaoConfig dao = new DaoConfig();
+        //dao.setAllowInlineMatchUrlReferences(true);
 
         FhirContext ctx = FhirContext.forDstu3();
         String classpath = "http://hapi.fhir.org/baseDstu3";
-       // MyPatientClientInterface client = ctx.newRestfulClient(MyPatientClientInterface.class, classpath);
+        MyPatientClientInterface client = ctx.newRestfulClient(MyPatientClientInterface.class, classpath);
         MyMedicationClientInterface client2 = ctx.newRestfulClient(MyMedicationClientInterface.class, classpath);
-       // IRestfulClient client = ctx.newRestfulClient(IRestfulClient.class,classpath);
+        //IRestfulClient client = ctx.newRestfulClient(IRestfulClient.class,classpath);
 
-       // IdDt searchParam = new Identifier().setValue("Max");
+        //IdDt searchParam = new Identifier().setValue("Max");
        // IdentifierDt searchParam = new IdentifierDt().setValue("163086");
 
         //List<Patient> clients = client.findPatientsByIdentifier(searchParam);
@@ -38,7 +37,7 @@ public class KrankenhausServer  {
         }
 
 */
-      //  List<Patient> patients = client.findPatientsForMrn(new IdentifierDt("urn:oid:1.2.36.146.595.217.0.1", "10006579"));
+        List<Patient> patients = client.findPatientsForMrn(new IdentifierDt("urn:oid:1.2.36.146.595.217.0.1", "12345"));
         //List<Patient> patients = client.ListPatient();
         List<Medication> medications = client2.getAlleMedikation();
 
@@ -55,6 +54,30 @@ public class KrankenhausServer  {
             System.out.println(medications.get(i).getCode().getCodingFirstRep().getCode());
         }
 */
+        System.out.println("Anzahl Medikamente" + patients.size());
+        for(int i = 0 ; i< patients.size(); i++) {
+            if (patients.get(i) != null) {
+                System.out.println("Patient " + i + " Identifier: " + patients.get(i).getIdentifier().get(0).getValue());
+                System.out.println("Patient " + i + " Identifier: " + patients.get(i).getIdentifier().get(0).getSystem());
+
+                System.out.println("Patient " + i + " Active " + patients.get(i).getActive());
+                System.out.println("Patient " + i + " Name " + patients.get(i).getName().get(0).getFamily());
+                System.out.println("Patient " + i + " Vorname " + patients.get(i).getName().get(0).getGiven());
+                //System.out.println("Patient " + i + " Telefon " + patients.get(i).getTelecom().get(0).getValue());
+                //System.out.println("Patient " + i + " Telefon " + patients.get(i).getTelecom().get(0).getValue());
+
+                System.out.println("Patient " + i + " Geburstag " + patients.get(i).getBirthDate());
+               // System.out.println("Patient " + i + "AufnahmeDatum " + patients.get(i).get);
+               // System.out.println("Patient " + i + "EntlassungsDatum " + patients.get(i).getName());
+                System.out.println("Patient " + i + " Deseased " + patients.get(i).getDeceased());
+               // System.out.println("Patient " + i + "Street " + patients.get(i).getAddress().get(0).getDis);
+                System.out.println("Patient " + i + " Hausnummer " + patients.get(i).getAddress().get(0).getLine());
+                System.out.println("Patient " + i + " Location " + patients.get(i).getAddress().get(0).getState());
+                System.out.println("Patient " + i + " PostalCode " + patients.get(i).getAddress().get(0).getPostalCode());
+                //System.out.println("Patient " + i + "Entlassungstatus " + patients.get(i).getName());
+                System.out.println("Patient " + i + " Gender " + patients.get(i).getGender().getDefinition());
+
+
         System.out.println("Anzahl Medikamente"+medications.size());
 
             for(int i = 0; i< medications.size();i++) {
