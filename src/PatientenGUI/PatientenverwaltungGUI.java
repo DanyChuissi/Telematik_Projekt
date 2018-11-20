@@ -7,21 +7,22 @@ import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import src.Fachlogik.MedicationStatement;
-import src.Fachlogik.Medikament;
 import src.Fachlogik.Patient;
-
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javax.swing.*;
+import java.io.File;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
-
 import static javax.swing.JOptionPane.NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
 
@@ -34,6 +35,7 @@ public class PatientenverwaltungGUI extends Application {
     private Button updateMed = new Button();
     private Button updatePatient = new Button();
     private Button entlassen = new Button();
+    private Button remove = new Button();
     private Patient patient = null;
     private List<Patient> list;
     private Date today = new  Date();
@@ -60,11 +62,19 @@ public class PatientenverwaltungGUI extends Application {
         //Obere Borderpane
         HBox hb = new HBox();
         HBox hb2 = new HBox();
+        HBox hb3 = new HBox();
 
         hb2.setPadding(new Insets(15, 12, 15, 12));
         hb.setPadding(new Insets(15, 12, 15, 12));
+        hb3.setPadding(new Insets(15, 12, 15, 12));
+
         hb.setSpacing(10.0);
         hb2.setSpacing(10.0);
+        hb3.setSpacing(10.0);
+
+        File file = new File("src/medLogo.png");
+        Image image = new Image(file.toURI().toString());
+        ImageView imageView = new ImageView(image);
 
         topBp.setRight(hb);
         topBp.setLeft(hb2);
@@ -75,6 +85,9 @@ public class PatientenverwaltungGUI extends Application {
         hb2.setAlignment(Pos.CENTER);
         hb2.getChildren().addAll(neuPatient, listPatient);
 
+        hb3.setAlignment(Pos.CENTER_LEFT);
+        hb3.getChildren().addAll(imageView);
+
         // Mittlere Bordepane
         final Label labelp = new Label("Patienten");
         labelp.setFont(new Font("Arial", 20));
@@ -83,6 +96,7 @@ public class PatientenverwaltungGUI extends Application {
         labelpd.setFont(new Font("Arial", 20));
         tvPatient.setEditable(true);
 
+        // Tabel colum für die Patienten tableview
         TableColumn identifierCol = new TableColumn("ID");
         identifierCol.setMinWidth(10);
         identifierCol.setCellValueFactory(new PropertyValueFactory<>("identifier"));
@@ -109,11 +123,13 @@ public class PatientenverwaltungGUI extends Application {
 
         tvPatient.getColumns().addAll(identifierCol,firstNameCol,lastNameCol,gebDatumCol, adresseCol, aufnahmedatumCol);
 
+        // Vbox für die Patienten Table view und Titel
         final VBox vboxP = new VBox();
         vboxP.setSpacing(5);
         //vboxP.setPadding(new Insets(10, 0, 0, 10));
         vboxP.getChildren().addAll(labelp, tvPatient);
 
+        // Vbox fpr Patienten Daten und Titel
         final VBox vboxPd = new VBox();
         vboxPd.setSpacing(5);
         //vboxP.setPadding(new Insets(10, 0, 0, 10));
@@ -126,16 +142,13 @@ public class PatientenverwaltungGUI extends Application {
         mitteBp.setRight(rechtBp);
 
 
-        //rechtBp.setPrefSize(200, 500);
-
-
         // Untere BorderpAne
         final Label labelm = new Label("Medikamente Statment");
         labelm.setFont(new Font("Arial", 20));
         tvMedikamente.setEditable(true);
 
 
-
+        // Column für die Medikamente Table view
         TableColumn medNameCol = new TableColumn("Name");
         medNameCol.setMinWidth(100);
         medNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -175,6 +188,7 @@ public class PatientenverwaltungGUI extends Application {
 
         tvMedikamente.getColumns().addAll(medNameCol,statutCol,dosageCol,periodeCol,takenCol, formCol, prescriptCol, manufacturerCol, noteCol);
 
+      //  Vbox füdie Medikamente Tableview und Titel
         final VBox vboxM = new VBox();
         vboxM.setSpacing(5);
         //vboxM.setPadding(new Insets(10, 0, 0, 10));
@@ -196,14 +210,16 @@ public class PatientenverwaltungGUI extends Application {
         hauptBp.setTop(topBp);
         hauptBp.setCenter(mitteBp);
         hauptBp.setBottom(bottomBp);
+        //topBp.setCenter(hb3);
 
+        //  neue Patiente Aufnehmen
         neuPatient.setOnAction(e -> {
             PatientenDatenGUI pv = new PatientenDatenGUI(primaryStage, control, null);
             pv.showView();
         });
 
 
-        // OnMouseCliked
+        // OnMouseCliked ( Auf Patiente in Tabelview
         tvPatient.setOnMouseClicked(new ListViewHandler() {
             @Override
             public void handle(javafx.scene.input.MouseEvent event) {
@@ -215,16 +231,58 @@ public class PatientenverwaltungGUI extends Application {
                     vboxPd.getChildren().setAll(labelpd, grid);
                     rechtBp.setCenter(vboxPd);
                     control.setMedtabelviewBD(tvMedikamente, patient);
-                    //vboxM.getChildren().setAll()
+
+                    //clik on Button Medikamente Verwalten
                     updateMed.setOnAction(e -> {
-                        MedikanmenteverwaltungGUI mv = new MedikanmenteverwaltungGUI(primaryStage, patient, control, null);
-                        mv.showView(tvMedikamente);
+                        if(patient.getEntlassungStatus() != true) {
+                            MedikanmenteverwaltungGUI mv = new MedikanmenteverwaltungGUI(primaryStage, patient, control, null);
+                            mv.showView(tvMedikamente);
+                        }
+                        else{
+                            Formatter formatter = new Formatter();
+                            formatter.format("Patient wurde Entlassen");
+
+                            JOptionPane.showMessageDialog(null, formatter.toString());
+                            formatter.close();
+                        }
                         ;
                     });
+
+                    // Patiente Löschen
+                    remove.setOnAction(e -> {
+                        if(control.getMedStat(patient).size() >= 0) {
+                            try {
+                                control.loeschePatientFromDB(patient);
+                                control.setPatTableview();
+                                Formatter formatter = new Formatter();
+                                formatter.format("Patient wurde gelöscht");
+
+                                JOptionPane.showMessageDialog(null, formatter.toString());
+                                formatter.close();
+                            } catch (SQLException e1) {
+                                Formatter formatter = new Formatter();
+                                formatter.format("Fehler beim Löschen");
+
+                                JOptionPane.showMessageDialog(null, formatter.toString());
+                                formatter.close();
+                            }
+                        }
+                        else{
+                            Formatter formatter = new Formatter();
+                            formatter.format("Patient kann nicht gelöscht werden, da er Medicamnet am laufen hat");
+
+                            JOptionPane.showMessageDialog(null, formatter.toString());
+                            formatter.close();
+                        }
+                    });
+
+                    // Clik on Button Patienten Daten verwalten
                     updatePatient.setOnAction(e -> {
                         PatientenDatenGUI pv = new PatientenDatenGUI(primaryStage, control, patient);
                         pv.showView();
                     });
+
+                    // Clik on ein Medikamante in Medikamente Tableview
                     tvMedikamente.setOnMouseClicked(new ListViewHandler() {
                         @Override
                         public void handle(javafx.scene.input.MouseEvent event) {
@@ -238,6 +296,8 @@ public class PatientenverwaltungGUI extends Application {
                         }
 
                     });
+
+                    //Patiente Entalssen
                     entlassen.setOnAction(e -> {
                         int reply = JOptionPane.showConfirmDialog(null, "Der Patient wird Jetzt Entlassen", "Hinweis", JOptionPane.YES_NO_OPTION);
                         if (reply == YES_OPTION) {
@@ -263,6 +323,10 @@ public class PatientenverwaltungGUI extends Application {
                 }
             }
         });
+
+
+
+        // Patiente Suchen
        suchen.setOnAction(e -> {
             try {
                 int id = Integer.parseInt(suchenFied.getText());
@@ -281,6 +345,7 @@ public class PatientenverwaltungGUI extends Application {
                     formatter.close();
                 }
 
+                // Fall Formatieren eine Exeption wirf soll der Patetien nach der Name gesucht
             }catch (NumberFormatException ee) {
 
                 try {
@@ -316,6 +381,8 @@ public class PatientenverwaltungGUI extends Application {
            // String name = suchenFied.getText();
 
         });
+
+       // Nach dem eine Patient gesucht worden ist. kann es mit diese Button auf die Pateiten Liste zurüch
         listPatient.setOnAction(e -> {
             control.setPatTableview();
                 });
@@ -330,6 +397,7 @@ public class PatientenverwaltungGUI extends Application {
     }
 
 
+    // Diese Methode wird beim click auf eine Patiente gerufen und zeig deiene Grid mit die Patiente  Datenb auf der recte Seite
     public GridPane getGrid(Patient p) {
         GridPane grid = new GridPane();
 
@@ -340,9 +408,11 @@ public class PatientenverwaltungGUI extends Application {
 
         Button updateMed = new Button("Medicament Verwalten");
         Button updateDaten = new Button("Daten Verwalten");
+        Button remove = new Button("Patient löschen");
 
         this.updateMed = updateMed;
         this.updatePatient = updateDaten;
+        this.remove = remove;
 
         HBox hb = new HBox();
         hb.setSpacing(10.0);
@@ -406,6 +476,7 @@ public class PatientenverwaltungGUI extends Application {
             grid.add(entlassdV, 1, 11);
 
             grid.add(hb, 1, 12);
+            grid.add(remove, 1,13);
 
             if(p.getEntlassungStatus() == false){
                 Button entlassen = new Button("Entlassen");
@@ -416,35 +487,6 @@ public class PatientenverwaltungGUI extends Application {
             }
         }
 
-
-
-
-
-        //grid.add(status, 0, 4);
-/*
-        grid.add(nameV, 1, 0);
-        grid.add(vornameV, 1, 1);
-        grid.add(idnummerV, 1, 2);
-        grid.add(gebDatumV, 1, 3);
-        grid.add(strasseV, 1, 4);
-        grid.add(stadtV, 1, 5);
-        grid.add(telV, 1, 6);
-        grid.add(genderV, 1, 7);
-        grid.add(deseadedV, 1, 8);
-        grid.add(activV, 1, 9);
-        grid.add(aufnahemeDV, 1, 10);
-        grid.add(entlassdV, 1, 11);
-
-
-        grid.add(hb, 1, 12);
-*/
-
-       // GridPane.setHgrow(tfname, Priority.ALWAYS);
-      //  GridPane.setHgrow(tfvor, Priority.NEVER);
-      //  GridPane.setHgrow(tfgebD, Priority.ALWAYS);
-       // GridPane.setHgrow(name, Priority.ALWAYS);
-        //GridPane.setHgrow(hb, Priority.ALWAYS);
-        //GridPane.setHalignment(b1, HPos.CENTER);
         GridPane.setValignment(updateDaten, VPos.BOTTOM);
         return grid;
     }

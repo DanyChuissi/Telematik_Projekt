@@ -104,6 +104,15 @@ public class MedikanmenteverwaltungGUI extends Stage {
             grid.add(hb, 1, 10);
 
             if(medS != null){
+                Button remove = new Button("löschen");
+                remove.setStyle("-fx-border-color: #ff0000; -fx-border-width: 3px");
+                HBox hb2 = new HBox();
+                hb2.setPadding(new Insets(15, 12, 15, 12));
+                hb2.setAlignment(Pos.CENTER);
+                hb2.getChildren().add(remove);
+
+                grid.add(hb2,1,11);
+
                 codeComboBox.setValue(medS.getMedikament().getCode());
                 dosageComboBox.setValue(medS.getDosage());
                 //vonV.setValue(medS.getVon(medS.getPeriode()));
@@ -111,6 +120,23 @@ public class MedikanmenteverwaltungGUI extends Stage {
                 takenComboBox.setValue(medS.getTaken());
                 statusComboBox.setValue(medS.getStatusStmt());
                 noteV.setText(medS.getNote());
+
+                remove.setOnAction(e -> {
+                    try {
+                        control.loescheMedStatement(medS);
+                        Formatter formatter = new Formatter();
+                        formatter.format("Medikamente Statement wurde gelöscht");
+
+                        JOptionPane.showMessageDialog(null, formatter.toString());
+                        formatter.close();
+                    } catch (SQLException e1) {
+                        Formatter formatter = new Formatter();
+                        formatter.format("Fehler beim Löschen");
+
+                        JOptionPane.showMessageDialog(null, formatter.toString());
+                        formatter.close();
+                    }
+                });
 
                 save.setOnAction(e -> {
                     Medikament med = new Medikament();
@@ -126,7 +152,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
                             medS.setForm(med.getForm());
                             medS.setManufacturer(med.getManufacturer());
                             medS.setName(med.getName());
-                            medS.setPrescription(med.isOverCounter());
+                            medS.setPrescription(med.isOverTheCounter());
 
                         medS.setPeriodevonbis(vonV.getValue().toString(), bisV.getValue().toString());
                         medS.setDosage(dosageComboBox.getValue());
@@ -134,13 +160,14 @@ public class MedikanmenteverwaltungGUI extends Stage {
                         medS.setStatusStmt(statusComboBox.getValue());
                         medS.setMedikament(med);
                         medS.setTaken(takenComboBox.getValue());
+                        control.setMedtabelviewBD(tv, medS);
 
-                        try {
+                        /*try {
                              MedicationStatement me = control.updateMedDaten(medS);
                              control.setMedTableview(tv, patient);
                         } catch (SQLException e1) {
                             e1.printStackTrace();
-                        }
+                        }*/
 
 
                         close();

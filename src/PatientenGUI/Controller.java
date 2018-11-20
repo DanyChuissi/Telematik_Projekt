@@ -2,11 +2,10 @@ package src.PatientenGUI;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
+import src.Datenhaltung.Krankenhaus;
 import src.Fachlogik.*;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +36,10 @@ public class Controller {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void loeschePatientFromDB(Patient p) throws SQLException {
+        kr.patientLoeschen(p);
     }
 
     public List<Patient> ladePatientDB() {
@@ -71,7 +74,7 @@ public class Controller {
     }
 
     public void addMedikamenteDB(Patient p, Medikament med, String taken, String status, String period, String note, String dosage) throws SQLException {
-        kr.addmedikament(p, med,taken,status, period, note, dosage);
+        kr.addMedikamentStatement(p, med,taken,status, period, note, dosage);
         //obsListMed.add(p.getMedicament());
         //setMedTableview(tv , p);
 
@@ -100,17 +103,15 @@ public class Controller {
     }
 
     public void setMedtabelviewBD(TableView tv, MedicationStatement me) {
-        tvMed = tv;
         tvMed.getItems().clear();
-        //if (p != null)
-        //try {
-        tvMed.getItems().add(me);
-        //tvMed.getItems().addAll(kr.getMediListPa(p));
-        //  } catch (SQLException e) {
-        // e.printStackTrace();
-        //} catch (NichtErlaubException e) {
-        //  e.printStackTrace();
-        //  }
+       Patient p = me.getPatient();
+        try {
+            tvMed.getItems().addAll(kr.getMediListPa(p));
+         } catch (SQLException e) {
+         e.printStackTrace();
+        } catch (NichtErlaubException e) {
+          e.printStackTrace();
+          }
     }
     public void setMedtabelviewBD(TableView tv, Patient p) {
         tvMed = tv;
@@ -162,5 +163,21 @@ public class Controller {
 
     public List<Patient> suchMitName(String name) throws SQLException, NichtErlaubException {
         return kr.suchtpaNa(name);
+    }
+
+    public List<MedicationStatement> getMedStat(Patient p){
+        List<MedicationStatement> list = null;
+        try {
+           list = kr.getMediListPa(p);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NichtErlaubException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public void loescheMedStatement (MedicationStatement medS) throws SQLException {
+        kr.medStatementtLoeschen(medS);
     }
 }

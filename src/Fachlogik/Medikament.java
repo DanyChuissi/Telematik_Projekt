@@ -1,10 +1,11 @@
 package src.Fachlogik;
 
 public class Medikament {
+    private String idServer;
     private int MedID;
     private String name;
     private String code; // SNOMED Code
-    private boolean isOverCounter; // if require prescription
+    private boolean isOverTheCounter; // if require prescription
     private String form; // powder | tablets | capsule +
     private String manufacturer; // Organisation
     private String statusMed;// active | inactive | entered-in-error
@@ -14,6 +15,14 @@ public class Medikament {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getIdServer() {
+        return idServer;
+    }
+
+    public void setIdServer(String idServer) {
+        this.idServer = idServer;
     }
 
     public String getName() {
@@ -28,12 +37,12 @@ public class Medikament {
         return MedID;
     }
 
-  //  @Override
-   // public String toString(){
-       // return this.code;
-  //  }
-    public boolean isOverCounter() {
-        return isOverCounter;
+    //  @Override
+    // public String toString(){
+    // return this.code;
+    //  }
+    public boolean isOverTheCounter() {
+        return isOverTheCounter;
     }
 
     public String getCode() {
@@ -65,7 +74,7 @@ public class Medikament {
     }
 
     public void setOverCounter(boolean overCounter) {
-        isOverCounter = overCounter;
+        isOverTheCounter = overCounter;
     }
 
     public void setStatusMed(String status) {

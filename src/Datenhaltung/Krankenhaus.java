@@ -1,9 +1,13 @@
-package src.Fachlogik;
+package src.Datenhaltung;
 
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import src.Fachlogik.MedicationStatement;
+import src.Fachlogik.Medikament;
+import src.Fachlogik.Patient;
 import src.PatientenGUI.NichtErlaubException;
 import java.sql.*;
 import java.text.DateFormat;
@@ -101,6 +105,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
+                patient.setIdServer(rs.getString(16));
                 break GETLASTINSERTED;//to read only the last row
             }
         }catch (SQLException e){
@@ -109,7 +114,7 @@ public class Krankenhaus {
         return patient;
     }
 
-    public void addmedikament(Patient p, Medikament m, String taken, String status , String period, String note, String dosage) throws SQLException {
+    public void addMedikamentStatement(Patient p, Medikament m, String taken, String status , String period, String note, String dosage) throws SQLException {
         conn.setAutoCommit(false);
         String select = "INSERT INTO medicamentstatement(PID,MeID,taken,note,status,periode,dosage)VALUES(?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
@@ -123,6 +128,7 @@ public class Krankenhaus {
             ps.setString(5, status);
             ps.setString(6,period );
             ps.setString(7,dosage );
+            //ps.setString(8,idServer);
 
             ps.executeUpdate();
             conn.commit();
@@ -163,6 +169,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
+                patient.setIdServer(rs.getString(16));
 
                 list.add(patient);
 
@@ -203,6 +210,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
+                patient.setIdServer(rs.getString(16));
             }
 
 
@@ -235,7 +243,7 @@ public class Krankenhaus {
          }
     }
 
-    public Medikament getmedicament(int id) throws SQLException {
+    public Medikament getMedicament(int id) throws SQLException {
 
         conn.setAutoCommit(false);
         String insert = "SELECT * FROM medicament WHERE MeID =" + id;
@@ -258,7 +266,7 @@ public class Krankenhaus {
                 medicament.setForm(rs.getString(5));
                 medicament.setManufacturer(rs.getString(6));
                 medicament.setStatusMed(rs.getString(7));
-
+                medicament.setIdServer(rs.getString(8));
             }
 
 
@@ -296,6 +304,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
+                patient.setIdServer(rs.getString(16));
                 list.add(patient);
 
             }
@@ -317,7 +326,6 @@ public class Krankenhaus {
             ps = conn.createStatement();
             conn.commit();
             ResultSet rs = ps.executeQuery(insert);
-            int i = 1;
 
             while (rs.next()) {
                 patient = new Patient();
@@ -336,6 +344,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
+                patient.setIdServer(rs.getString(16));
 
                 list.add(patient);
 
@@ -365,7 +374,7 @@ public class Krankenhaus {
             while(rs.next()) {
                 medicationStatement = new MedicationStatement();
                 medicationStatement.setPatient(getPatient(rs.getInt(1)));
-                medicationStatement.setMedikament(getmedicament(rs.getInt(2)));
+                medicationStatement.setMedikament(getMedicament(rs.getInt(2)));
                 medicationStatement.setTaken((rs.getString(3)));
                 medicationStatement.setNote(rs.getString(4));
                 medicationStatement.setStatusStmt((rs.getString(5)));
@@ -376,6 +385,7 @@ public class Krankenhaus {
                 medicationStatement.setManufacturer(rs.getString(9));
                 medicationStatement.setPrescription(rs.getBoolean(10));
                 medicationStatement.setStatusStmt((rs.getString(11)));
+                medicationStatement.setIdServer(rs.getString(12));
 
             }
         } catch (SQLException e) {
@@ -401,19 +411,21 @@ public class Krankenhaus {
                 medicationStatement = new MedicationStatement();
                 medicationStatement.setIdentifier((rs.getInt(1)));
                 medicationStatement.setPatient(getPatient(rs.getInt(2)));
-                medicationStatement.setMedikament(getmedicament(rs.getInt(3)));
+                medicationStatement.setMedikament(getMedicament(rs.getInt(3)));
                 medicationStatement.setTaken((rs.getString(4)));
                 medicationStatement.setNote(rs.getString(5));
                 medicationStatement.setStatusStmt((rs.getString(6)));
                 medicationStatement.setPeriode(rs.getString(7));
                 medicationStatement.setDosage(rs.getString(8));
+                medicationStatement.setIdServer(rs.getString(9));
 
 
-                med = getmedicament(rs.getInt(3));
+                med = getMedicament(rs.getInt(3));
                 medicationStatement.setForm(med.getForm());
                 medicationStatement.setName(med.getName());
                 medicationStatement.setManufacturer(med.getManufacturer());
-                medicationStatement.setPrescription(med.isOverCounter());
+                medicationStatement.setPrescription(med.isOverTheCounter());
+                //medicationStatement.setIdServer(med.getIdServer());
 
                 medi.add(medicationStatement);
             }
@@ -444,6 +456,7 @@ public class Krankenhaus {
                 medicament.setForm(rs.getString(5));
                 medicament.setManufacturer(rs.getString(6));
                 medicament.setStatusMed(rs.getString(7));
+                medicament.setIdServer(rs.getString(8));
                 list.add(medicament);
             }
 
@@ -456,7 +469,7 @@ public class Krankenhaus {
     public void updatepaDaten(Patient p) throws SQLException {
         conn.setAutoCommit(false);
         int id = p.getIdentifier();
-        String updatePa = "UPDATE patient SET  name = ?, vorname = ?,gender = ?,active = ?,telefon = ?,birthdate = ?, deseased = ?,street = ?,housenumber = ?, location = ?, postalcode = ?, aufnahmeDatum = ?, entlassungsDatum = ? ,entlassungStatus = ? WHERE identifier = " + id;
+        String updatePa = "UPDATE patient SET  name = ?, vorname = ?,gender = ?,active = ?,telefon = ?,birthdate = ?, deseased = ?,street = ?,housenumber = ?, location = ?, postalcode = ?, aufnahmeDatum = ?, entlassungsDatum = ? ,entlassungStatus = ? idServer = ? WHERE identifier = " + id;
         PreparedStatement ps = null;
 
         try {
@@ -477,6 +490,7 @@ public class Krankenhaus {
             ps.setDate(12, (Date) patient.getAufnahmeDatum());
             ps.setDate(13, (Date) patient.getEntlassungsdatum());
             ps.setBoolean(14, patient.getEntlassungStatus());
+            ps.setString(15,patient.getIdServer());
 
             ps.executeUpdate();
             conn.commit();
@@ -510,17 +524,54 @@ public class Krankenhaus {
         return me;
     }
 
-   /* public static void main(String[] args) throws Exception
-    {
+    public void patientLoeschen(Patient p) throws SQLException {
+        conn.setAutoCommit(false);
+        int  id = p.getIdentifier();
+        String deletePa = "DELETE from patient WHERE identifier = ?";
+
+        PreparedStatement ps = null;
+
+        try{
+            ps = conn.prepareStatement(deletePa);
+            ps.setInt(1 ,id);
+            ps.executeUpdate();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void medStatementtLoeschen(MedicationStatement medS) throws SQLException {
+        conn.setAutoCommit(false);
+        int  id = medS.getIdentifier();
+        String deleteMe = "DELETE from medicamentstatement WHERE statID = ?";
+
+        PreparedStatement ps = null;
+
+        try{
+            ps = conn.prepareStatement(deleteMe);
+            ps.setInt(1 ,id);
+            ps.executeUpdate();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
         Patient pa = null;
         Medikament me = null;
         Krankenhaus kr = new Krankenhaus();
         kr.connect();
-        /*  pa = kr.getPatient(1);
-         List<Medikament> list = kr.getMedikamentList();
-       for (int i = 0; i < list.size(); i++){
-         System.out.println(""+list.get(i).getCode()+ " " +list.get(i).getName());
-       }*/
+        pa = kr.getPatient(11);
+        System.out.println(pa.getName());
+        List<MedicationStatement> list = kr.getMediListPa(pa);
+        System.out.println(list.size());
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println("abruf " + i );
+            System.out.println("" + list.get(i).getName() + " " + list.get(i).getManufacturer());
+        }
+        kr.connclose();
+    }
+}
       //System.out.println(""+kr.getPatient(3).getName()+ " " +kr.getPatient(3).getVorname());
        // System.out.println(kr.getmedicment(1).getName());
 
@@ -538,7 +589,7 @@ public class Krankenhaus {
 
 
         kr.connclose();
-    }*/
+    }
 
 
-}
+}*/
