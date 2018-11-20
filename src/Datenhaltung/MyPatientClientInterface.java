@@ -40,7 +40,7 @@ public List<Patient> findPatientsByIdentifier(@RequiredParam(name="identifier") 
      * http://fhir.healthintersections.com.au/open/Patient?identifier=urn:oid:1.2.36.146.595.217.0.1%7C12345
      */
     @Search
-    List<Patient> findPatientsForMrn(@RequiredParam(name = Patient.SP_IDENTIFIER) IdentifierDt theIdentifier);
+    List<Patient> findPatientsForMrn(@RequiredParam(name = Patient.SP_IDENTIFIER) Identifier theIdentifier);
 
     @Search
     List<Patient> ListPatient();
