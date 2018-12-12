@@ -11,7 +11,7 @@ package src.Fachlogik;
 
 public class Patient {
 
-    private String idServer;
+    private int idServer;
     private int identifier;
     private boolean active = false;
     private String name;
@@ -39,11 +39,11 @@ public class Patient {
         medicament = new LinkedList<MedicationStatement>();
     }
 
-    public String getIdServer() {
+    public int getIdServer() {
         return idServer;
     }
 
-    public void setIdServer(String idServer) {
+    public void setIdServer(int idServer) {
         this.idServer = idServer;
     }
 

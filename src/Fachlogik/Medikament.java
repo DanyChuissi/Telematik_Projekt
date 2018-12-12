@@ -1,7 +1,7 @@
 package src.Fachlogik;
 
 public class Medikament {
-    private String idServer;
+    private int idServer;
     private int MedID;
     private String name;
     private String code; // SNOMED Code
@@ -17,11 +17,11 @@ public class Medikament {
         this.name = name;
     }
 
-    public String getIdServer() {
+    public int getIdServer() {
         return idServer;
     }
 
-    public void setIdServer(String idServer) {
+    public void setIdServer(int idServer) {
         this.idServer = idServer;
     }
 

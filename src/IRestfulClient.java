@@ -5,6 +5,7 @@ import java.util.List;
 
 import ca.uhn.fhir.model.primitive.StringDt;
 import org.hl7.fhir.dstu3.model.Medication;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.hl7.fhir.instance.model.IdType;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
@@ -12,7 +13,6 @@ import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.client.api.IBasicClient;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.hl7.fhir.instance.model.StringType;
 
 
 public interface IRestfulClient extends IBasicClient {
@@ -52,6 +52,9 @@ public interface IRestfulClient extends IBasicClient {
 
     @Search()
     public List<Medication> getMedication();
+
+    @Search()
+    public List<Patient> getAllePatient();
 
 
 }

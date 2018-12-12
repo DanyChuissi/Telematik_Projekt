@@ -252,13 +252,16 @@ public class PatientenverwaltungGUI extends Application {
                     remove.setOnAction(e -> {
                         if(control.getMedStat(patient).size() >= 0) {
                             try {
-                                control.loeschePatientFromDB(patient);
-                                control.setPatTableview();
-                                Formatter formatter = new Formatter();
-                                formatter.format("Patient wurde gelöscht");
+                                int reply = JOptionPane.showConfirmDialog(null, "Der Patient wird Jetzt vom DatenBank gelöscht", "Hinweis", JOptionPane.YES_NO_OPTION);
+                                if(reply == YES_OPTION) {
+                                    control.loeschePatientFromDB(patient);
+                                    control.setPatTableview();
+                                    Formatter formatter = new Formatter();
+                                    formatter.format("Patient wurde gelöscht");
 
-                                JOptionPane.showMessageDialog(null, formatter.toString());
-                                formatter.close();
+                                    JOptionPane.showMessageDialog(null, formatter.toString());
+                                    formatter.close();
+                                }
                             } catch (SQLException e1) {
                                 Formatter formatter = new Formatter();
                                 formatter.format("Fehler beim Löschen");
@@ -423,6 +426,7 @@ public class PatientenverwaltungGUI extends Application {
         Label name = new Label("Name");
         Label vorname = new Label("Vorname");
         Label idnummer = new Label("Id Nummer");
+        Label idServer = new Label("idServer");
         Label gebDatum = new Label("GeburtsDatum");
         Label strasse = new Label("Strasse, H-nummer");
         Label stadt = new Label("Plz- Stadt");
@@ -438,6 +442,7 @@ public class PatientenverwaltungGUI extends Application {
             Label nameV = new Label("" + p.getName());
             Label vornameV = new Label("" + p.getVorname());
             Label idnummerV = new Label("" + p.getIdentifier());
+            Label idServerV = new Label(""+p.getIdServer());
             Label gebDatumV = new Label("" + p.getGeburtsdatumS());
             Label strasseV = new Label(p.getStreet() + ", " + p.getHousenumber());
             Label stadtV = new Label(p.getPostalcode() + ", " + p.getLocation());
@@ -451,37 +456,39 @@ public class PatientenverwaltungGUI extends Application {
             grid.add(name, 0, 0);
             grid.add(vorname, 0, 1);
             grid.add(idnummer, 0, 2);
-            grid.add(gebDatum, 0, 3);
-            grid.add(strasse, 0, 4);
-            grid.add(stadt, 0, 5);
-            grid.add(tel, 0, 6);
-            grid.add(gender, 0, 7);
-            grid.add(deseaded, 0, 8);
-            grid.add(activ, 0, 9);
-            grid.add(aufnahemeD, 0, 10);
-            grid.add(entlassd, 0, 11);
+            grid.add(idServer, 0, 3);
+            grid.add(gebDatum, 0, 4);
+            grid.add(strasse, 0, 5);
+            grid.add(stadt, 0, 6);
+            grid.add(tel, 0, 7);
+            grid.add(gender, 0, 8);
+            grid.add(deseaded, 0, 9);
+            grid.add(activ, 0, 10);
+            grid.add(aufnahemeD, 0, 11);
+            grid.add(entlassd, 0, 12);
 
 
             grid.add(nameV, 1, 0);
             grid.add(vornameV, 1, 1);
             grid.add(idnummerV, 1, 2);
-            grid.add(gebDatumV, 1, 3);
-            grid.add(strasseV, 1, 4);
-            grid.add(stadtV, 1, 5);
-            grid.add(telV, 1, 6);
-            grid.add(genderV, 1, 7);
-            grid.add(deseadedV, 1, 8);
-            grid.add(activV, 1, 9);
-            grid.add(aufnahemeDV, 1, 10);
-            grid.add(entlassdV, 1, 11);
+            grid.add(idServerV, 1, 3);
+            grid.add(gebDatumV, 1, 4);
+            grid.add(strasseV, 1, 5);
+            grid.add(stadtV, 1, 6);
+            grid.add(telV, 1, 7);
+            grid.add(genderV, 1, 8);
+            grid.add(deseadedV, 1, 9);
+            grid.add(activV, 1, 10);
+            grid.add(aufnahemeDV, 1, 11);
+            grid.add(entlassdV, 1, 12);
 
-            grid.add(hb, 1, 12);
-            grid.add(remove, 1,13);
+            grid.add(hb, 1, 13);
+            grid.add(remove, 1,14);
 
             if(p.getEntlassungStatus() == false){
                 Button entlassen = new Button("Entlassen");
                 this.entlassen = entlassen;
-                grid.add(entlassen, 0, 12);
+                grid.add(entlassen, 0, 13);
 
 
             }

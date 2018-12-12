@@ -38,9 +38,9 @@ CREATE TABLE `patient` (
   `aufnahmeDatum` date DEFAULT NULL,
   `entlassungsDatum` date DEFAULT NULL,
   `entlassungStatus` tinyint(1) DEFAULT NULL,
-  idServer varchar(255),
+  `idServer` int(11) DEFAULT NULL,
   PRIMARY KEY (`identifier`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,7 +49,7 @@ CREATE TABLE `patient` (
 
 LOCK TABLES `patient` WRITE;
 /*!40000 ALTER TABLE `patient` DISABLE KEYS */;
-INSERT INTO `patient` VALUES (5,'Max ','Musterman','male',NULL,'017623928382','2010-11-18',0,'Allestr',2,'Dortmund',44227,'2018-11-06',NULL,0),(6,'Paul','Müller','male',NULL,'01539090989','2014-07-23',0,'Emil-Figge',4,'Dortmund',44567,'2018-11-06',NULL,0),(7,'Elsa','Edda','female',NULL,'023523339383','2014-01-17',0,'Brüxstr',34,'Essen',33245,'2018-11-06',NULL,0),(8,'Hanz','Peter','unknown',NULL,'025698494849','2014-11-06',1,'Bornstr',88,'Köln',45674,'2018-11-06',NULL,0);
+INSERT INTO `patient` VALUES (6,'Paul','Müller','male',NULL,'01539090989','2014-07-23',0,'Emil-Figge',4,'Dortmund',44567,'2018-11-06',NULL,0,123456),(7,'Elsa','Edda','female',NULL,'023523339383','2014-01-17',0,'Brüxstr',34,'Essen',33245,NULL,NULL,0,NULL),(8,'Hanz','Peter','unknown',NULL,'025698494849','2014-11-06',1,'Bornstr',88,'Köln',45674,'2018-11-06',NULL,0,NULL),(9,'Max','Becker','male',NULL,'02939283833','2015-03-17',0,'Sternstr',3,'Bochum',34342,'2018-11-06',NULL,0,NULL),(10,'Max ','Musterman','male',NULL,'017623928382','2010-11-18',0,'Allestr',2,'Dortmund',44227,'2018-11-06',NULL,0,123457);
 /*!40000 ALTER TABLE `patient` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -62,4 +62,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-06 10:45:32
+-- Dump completed on 2018-12-12 13:31:47

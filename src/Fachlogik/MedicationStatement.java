@@ -11,7 +11,7 @@ public class MedicationStatement {
 
 
     private Medikament medikament;
-    private String idServer;
+    private int idServer;
     private int identifier ;
     private String taken; // y | n | unk | na
     private String note;
@@ -34,10 +34,10 @@ public class MedicationStatement {
     public MedicationStatement(){
     }
 
-    public String getIdServer() {
+    public int getIdServer() {
         return idServer;
     }
-    public void setIdServer(String idServer) {
+    public void setIdServer(int idServer) {
         this.idServer = idServer;
     }
 

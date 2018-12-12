@@ -30,9 +30,9 @@ CREATE TABLE `medicament` (
   `form` varchar(255) DEFAULT NULL,
   `manufacturer` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
-  idServer varchar(255),
+  `idServer` int(11) DEFAULT NULL,
   PRIMARY KEY (`MeID`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `medicament` (
 
 LOCK TABLES `medicament` WRITE;
 /*!40000 ALTER TABLE `medicament` DISABLE KEYS */;
-INSERT INTO `medicament` VALUES (1,'ABILIFY 10 mg Tabletten','CE$567',1,'Tabletten','axicorp Pharma GmbH','activ'),(2,'BALDRIAN TEE','CE$568',0,'Capsul','Biologische Heilmittel Heel GmbH','inactif'),(3,'BACTERIUM COLI','CE$569',1,'Saft','Vita Natura GmbH & Co. KG','activ'),(4,'IBERIS amara LM 13 Dilution','CE$5610',1,'Powder','ARCANA Dr. Sewerin GmbH','activ'),(5,'TALOXA Saft','CE$5611',1,'Saft','Kohlpharma GmbH','entered-in-error'),(6,'TAMBOCOR Tabletten','CE$5612',1,'Tablette','MEDA Pharma GmbH','activ'),(7,'XALACOM','CE$5613',1,'Augentropfen','EMRA-MED Arzneimittel GmbH','activ');
+INSERT INTO `medicament` VALUES (1,'aspirin 650 mg Add\'l Sig','308411',0,NULL,NULL,'Active',NULL),(2,'pseudoephedrine-guaifenesin 30-150 mg Add\'l Sig','1298407',0,NULL,NULL,'Active',NULL);
 /*!40000 ALTER TABLE `medicament` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-06 10:45:32
+-- Dump completed on 2018-12-12 13:31:47

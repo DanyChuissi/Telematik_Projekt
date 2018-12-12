@@ -121,6 +121,10 @@ public class PatientenDatenGUI extends Stage {
             else {
                 nein.setSelected(true);
             }
+            if(patient.getAufnahmeDatum() == null){
+                save = new Button("Patient im DB Speichern");
+                hb.getChildren().setAll(save,abbrechen);
+            }
 
             save.setOnAction(e -> {
                 if(!tfname.getText().isEmpty()  && !tfvor.getText().isEmpty()) {

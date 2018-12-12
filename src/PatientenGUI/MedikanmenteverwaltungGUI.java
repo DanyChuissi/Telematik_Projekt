@@ -57,7 +57,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
             ComboBox<String> codeComboBox = new ComboBox<String>();
             List<Medikament> tmp = control.getMedikamentList();
             for(int i = 0; i < tmp.size(); i++){
-                codeComboBox.getItems().add(tmp.get(i).getCode());
+                codeComboBox.getItems().add(tmp.get(i).getName());
             }
             ComboBox<String> dosageComboBox = new ComboBox<String>();
             dosageComboBox.getItems().addAll( "1 x täglich" , "2 x täglich" , "3 x täglich" , "4 x täglich");

@@ -14,13 +14,14 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class Krankenhaus {
     private Patient patient = null;
     private Medikament medicament;
     private MedicationStatement medicationStatement;
-    private DateFormat df = new SimpleDateFormat("YYYY-MM-DD");
+   // private DateFormat df = new SimpleDateFormat("YYYY-MM-DD");
     Connection conn = null;
     String url = "jdbc:mysql://localhost:3306/krankenhaus?serverTimezone=MET";
 
@@ -45,10 +46,9 @@ public class Krankenhaus {
             e.printStackTrace();
         }
     }
-
     public void addPatientDB(Patient p) throws SQLException {
         conn.setAutoCommit(false);
-        String insert = "INSERT INTO patient(name, vorname,gender,telefon,birthdate, deseased,street,housenumber, location, postalcode,aufnahmeDatum ,entlassungStatus) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+        String insert = "INSERT INTO patient(name, vorname,gender,telefon,birthdate, deseased,street,housenumber, location, postalcode,aufnahmeDatum ,entlassungStatus, idServer) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
         try {
             String str="2015-03-31";
@@ -67,6 +67,7 @@ public class Krankenhaus {
             ps.setInt(10, p.getPostalcode());
             ps.setDate(11,p.stringToSqlDate(p.getAufnahmeDatumS()));
             ps.setBoolean(12, p.getEntlassungStatus());
+            ps.setInt(13,p.getIdServer());
 
             ps.execute();
             conn.commit();
@@ -75,6 +76,31 @@ public class Krankenhaus {
             e.printStackTrace();
         }
     }
+
+    /* Diese Methode fügt einen Medikament in der Datenbank*/
+    public void addMedikamentDB(Medikament m) throws SQLException {
+        conn.setAutoCommit(false);
+        String insert = "INSERT INTO medicament(name, code,isOvercounter,form,manufacturer, status,idServer) VALUES(?,?,?,?,?,?,?)";
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(insert);
+
+            ps.setString(1, m.getName());
+            ps.setString(2, m.getCode());
+            ps.setBoolean(3, m.isOverTheCounter());
+            ps.setString(4, m.getForm());
+            ps.setString(5, m.getManufacturer());
+            ps.setString(6, m.getStatusMed());
+            ps.setInt(7, m.getIdServer());
+
+            ps.execute();
+            conn.commit();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public Patient getLastInserted() throws SQLException, NichtErlaubException {
         conn.setAutoCommit(false);
@@ -105,7 +131,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getString(16));
+                patient.setIdServer(rs.getInt(16));
                 break GETLASTINSERTED;//to read only the last row
             }
         }catch (SQLException e){
@@ -169,7 +195,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getString(16));
+                patient.setIdServer(rs.getInt(16));
 
                 list.add(patient);
 
@@ -210,7 +236,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getString(16));
+                patient.setIdServer(rs.getInt(16));
             }
 
 
@@ -266,7 +292,7 @@ public class Krankenhaus {
                 medicament.setForm(rs.getString(5));
                 medicament.setManufacturer(rs.getString(6));
                 medicament.setStatusMed(rs.getString(7));
-                medicament.setIdServer(rs.getString(8));
+                medicament.setIdServer(rs.getInt(8));
             }
 
 
@@ -304,7 +330,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getString(16));
+                patient.setIdServer(rs.getInt(16));
                 list.add(patient);
 
             }
@@ -344,7 +370,7 @@ public class Krankenhaus {
                 patient.setAufnahmeDatum(rs.getDate(13));
                 patient.setEntlassungsDatum(rs.getDate(14));
                 patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getString(16));
+                patient.setIdServer(rs.getInt(16));
 
                 list.add(patient);
 
@@ -385,7 +411,7 @@ public class Krankenhaus {
                 medicationStatement.setManufacturer(rs.getString(9));
                 medicationStatement.setPrescription(rs.getBoolean(10));
                 medicationStatement.setStatusStmt((rs.getString(11)));
-                medicationStatement.setIdServer(rs.getString(12));
+                medicationStatement.setIdServer(rs.getInt(12));
 
             }
         } catch (SQLException e) {
@@ -417,7 +443,7 @@ public class Krankenhaus {
                 medicationStatement.setStatusStmt((rs.getString(6)));
                 medicationStatement.setPeriode(rs.getString(7));
                 medicationStatement.setDosage(rs.getString(8));
-                medicationStatement.setIdServer(rs.getString(9));
+                medicationStatement.setIdServer(rs.getInt(9));
 
 
                 med = getMedicament(rs.getInt(3));
@@ -456,7 +482,7 @@ public class Krankenhaus {
                 medicament.setForm(rs.getString(5));
                 medicament.setManufacturer(rs.getString(6));
                 medicament.setStatusMed(rs.getString(7));
-                medicament.setIdServer(rs.getString(8));
+                medicament.setIdServer(rs.getInt(8));
                 list.add(medicament);
             }
 
@@ -490,7 +516,7 @@ public class Krankenhaus {
             ps.setDate(12, (Date) patient.getAufnahmeDatum());
             ps.setDate(13, (Date) patient.getEntlassungsdatum());
             ps.setBoolean(14, patient.getEntlassungStatus());
-            ps.setString(15,patient.getIdServer());
+            ps.setInt(15,patient.getIdServer());
 
             ps.executeUpdate();
             conn.commit();
@@ -571,25 +597,25 @@ public class Krankenhaus {
         }
         kr.connclose();
     }
-}
-      //System.out.println(""+kr.getPatient(3).getName()+ " " +kr.getPatient(3).getVorname());
-       // System.out.println(kr.getmedicment(1).getName());
-
-        /*DateFormat df = new SimpleDateFormat("YYYY-MM-DD");
-
-        String str="2015-03-31";
-        Date date=Date.valueOf(str);
-
-        kr.addPatientDBt("Francia", "Atangana", "female",012234443, date, false, "Emmil figge", 7, "Dortmund", 44227, true) ;
-
-        pa = kr.getPatient(5);
-       List<MedicationStatement> listmed = kr.getMediListPa(pa);
-       listmed.get(0).setStatusStmt("completed");
-       kr.updateMeDaten(listmed.get(0));
-
-
-        kr.connclose();
+    {
+     Krankenhaus kr = new Krankenhaus();
+     kr.connect();
+     Patient pa = new Patient();
+        pa.setIdServer(123456);
+        pa.setName("Pierre");
+        pa.setGeburtsdatum(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
+        pa.setAufnahmeDatum(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
+        try {
+            kr.addPatientDB(pa);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            kr.connclose();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
-}*/
+}
