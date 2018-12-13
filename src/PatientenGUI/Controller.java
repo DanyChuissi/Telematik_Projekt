@@ -104,9 +104,9 @@ public class Controller {
 
     public void setMedtabelviewBD(TableView tv, MedicationStatement me) {
         tvMed.getItems().clear();
-       Patient p = me.getPatient();
+       //Patient p = me.getPatient();
         try {
-            tvMed.getItems().addAll(kr.getMediListPa(p));
+            tvMed.getItems().addAll(kr.getMediList(me.getPatientId()));
          } catch (SQLException e) {
          e.printStackTrace();
         } catch (NichtErlaubException e) {

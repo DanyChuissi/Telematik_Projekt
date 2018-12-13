@@ -23,10 +23,18 @@ public class MedicationStatement {
     private boolean prescription;
     private String statusStmt; //active | completed | entered-in-error | intended | stopped | on-hold
     private DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
+    private int patientId;
 
+    public int getPatientId() {
+        return patientId;
+    }
 
-    public MedicationStatement(Patient patient, Medikament medikament, String taken, String status){
-        this.patient = patient;
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
+    }
+
+    public MedicationStatement(int Id, Medikament medikament, String taken, String status){
+        patientId = Id;
         this.medikament = medikament;
         this.taken = taken;
         this.statusStmt = status;
@@ -108,9 +116,9 @@ public class MedicationStatement {
         return medikament;
     }
 
-    public Patient getPatient() {
+    /*public Patient getPatient() {
         return patient;
-    }
+    }*/
 
     public String getTaken() {
         return taken;
@@ -124,9 +132,9 @@ public class MedicationStatement {
         return dosage;
     }
 
-    public void setPatient(Patient patient) {
+   /* public void setPatient(Patient patient) {
         this.patient = patient;
-    }
+    }*/
 
     public void setMedikament(Medikament medikament) {
         this.medikament = medikament;

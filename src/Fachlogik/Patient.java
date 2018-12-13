@@ -79,10 +79,10 @@ public class Patient {
         return this.gender;
     }
 
-    public void addmedicament(Medikament med, String taken, String status) {
+    /*public void addmedicament(Medikament med, String taken, String status) {
         MedicationStatement neu = new MedicationStatement(this, med, taken, status);
         medicament.add(neu);
-    }
+    }*/
 
     public void addMedStatment(MedicationStatement med){
         medicament.add(med);
@@ -128,7 +128,7 @@ public class Patient {
     }
 
     public void setTelefon(String telefon) throws NumberFormatException {
-            long tel = Long.parseLong(telefon);
+           // long tel = Long.parseLong(telefon);
             this.telefon = telefon;
     }
 

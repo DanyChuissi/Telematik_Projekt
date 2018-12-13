@@ -399,7 +399,7 @@ public class Krankenhaus {
             ResultSet rs = ps.executeQuery(insert);
             while(rs.next()) {
                 medicationStatement = new MedicationStatement();
-                medicationStatement.setPatient(getPatient(rs.getInt(1)));
+                medicationStatement.setPatientId((rs.getInt(1)));
                 medicationStatement.setMedikament(getMedicament(rs.getInt(2)));
                 medicationStatement.setTaken((rs.getString(3)));
                 medicationStatement.setNote(rs.getString(4));
@@ -436,7 +436,7 @@ public class Krankenhaus {
             while(rs.next()) {
                 medicationStatement = new MedicationStatement();
                 medicationStatement.setIdentifier((rs.getInt(1)));
-                medicationStatement.setPatient(getPatient(rs.getInt(2)));
+                medicationStatement.setPatientId((rs.getInt(2)));
                 medicationStatement.setMedikament(getMedicament(rs.getInt(3)));
                 medicationStatement.setTaken((rs.getString(4)));
                 medicationStatement.setNote(rs.getString(5));
