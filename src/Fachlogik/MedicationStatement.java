@@ -11,7 +11,7 @@ public class MedicationStatement {
 
 
     private Medikament medikament;
-    private int idServer;
+    private String idServer;
     private int identifier ;
     private String taken; // y | n | unk | na
     private String note;
@@ -21,6 +21,7 @@ public class MedicationStatement {
     private String name;
     private String manufacturer;
     private boolean prescription;
+    private String code;
     private String statusStmt; //active | completed | entered-in-error | intended | stopped | on-hold
     private DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
     private int patientId;
@@ -42,10 +43,18 @@ public class MedicationStatement {
     public MedicationStatement(){
     }
 
-    public int getIdServer() {
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getIdServer() {
         return idServer;
     }
-    public void setIdServer(int idServer) {
+    public void setIdServer(String idServer) {
         this.idServer = idServer;
     }
 

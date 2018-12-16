@@ -5,35 +5,45 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import src.Fachlogik.MedicationStatement;
+import src.Fachlogik.Medikament;
 import src.Fachlogik.Patient;
 import javax.swing.*;
+import java.awt.*;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.List;
+import java.util.Locale;
 
 
 public class PatientenDatenGUI extends Stage {
     private Stage primaryStage;
     private Controller control;
     private Patient patient;
-    private Date today = new  Date();
-    private  SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private Date today = new Date();
+    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-    public PatientenDatenGUI(Stage primaryStage, Controller control, Patient patient){
+    public PatientenDatenGUI(Stage primaryStage, Controller control, Patient patient) {
         this.primaryStage = primaryStage;
         this.control = control;
         this.patient = patient;
     }
 
-    public void showView(){
+    public void showView() {
         GridPane grid = new GridPane();
 
         grid.setPadding(new Insets(10.0));
@@ -46,8 +56,7 @@ public class PatientenDatenGUI extends Stage {
         Label gender = new Label("Gender");
         Label tel = new Label("Telefon");
         Label deseaded = new Label("Gestorben?");
-        Label street = new Label("Straße");
-        Label haussn = new Label("Hausnummer");
+        Label street = new Label("HausNr, Straße");
         Label postalcode = new Label("Postleitzahl");
         Label location = new Label("Stadt");
 
@@ -76,10 +85,9 @@ public class PatientenDatenGUI extends Stage {
         grid.add(tel, 0, 3);
         grid.add(gender, 0, 4);
         grid.add(street, 0, 5);
-        grid.add(haussn, 0, 6);
-        grid.add(postalcode, 0, 7);
-        grid.add(location, 0, 8);
-        grid.add(deseaded, 0, 9);
+        grid.add(postalcode, 0, 6);
+        grid.add(location, 0, 7);
+        grid.add(deseaded, 0, 8);
 
 
         grid.add(tfname, 1, 0);
@@ -87,12 +95,11 @@ public class PatientenDatenGUI extends Stage {
         grid.add(tfgebD, 1, 2);
         grid.add(tftel, 1, 3);
         ComboBox<String> genderComboBox = new ComboBox<String>();
-        genderComboBox.getItems().addAll("male","female","other","unknown");
+        genderComboBox.getItems().addAll("male", "female", "other", "unknown");
         grid.add(genderComboBox, 1, 4);
         grid.add(tfstreet, 1, 5);
-        grid.add(tfhaussn, 1, 6);
-        grid.add(tfpostalc, 1, 7);
-        grid.add(tflocation, 1, 8);
+        grid.add(tfpostalc, 1, 6);
+        grid.add(tflocation, 1, 7);
 
         CheckBox ja = new CheckBox("Ja");
         CheckBox nein = new CheckBox("Nein");
@@ -100,36 +107,35 @@ public class PatientenDatenGUI extends Stage {
         hbCheck.setSpacing(10);
         hbCheck.getChildren().addAll(ja, nein);
 
-        grid.add(hbCheck, 1, 9);
-        grid.add(hb, 1, 10);
+        grid.add(hbCheck, 1, 8);
+        grid.add(hb, 1, 9);
 
-        if(patient != null){
+        if (patient != null) {
             tfname.setText(patient.getName());
             tfvor.setText(patient.getVorname());
-            LocalDate localDate = patient.getGeburtsdatum().toLocalDate();
-            tfgebD.setValue(localDate);
-            tftel.setText(""+patient.getTelefon());
+            if (patient.getGeburtsdatum() != null) {
+                LocalDate localDate = patient.getGeburtsdatum().toLocalDate();
+                tfgebD.setValue(localDate);
+            }
+            tftel.setText("" + patient.getTelefon());
             genderComboBox.setValue(patient.getGender());
             tfstreet.setText(patient.getStreet());
-            tfhaussn.setText(""+patient.getHousenumber());
-            tfpostalc.setText(""+patient.getPostalcode());
+            tfpostalc.setText("" + patient.getPostalcode());
             tflocation.setText(patient.getLocation());
 
-            if(patient.getDeseased() == true){
+            if (patient.getDeseased() == true) {
                 ja.setSelected(true);
-            }
-            else {
+            } else {
                 nein.setSelected(true);
             }
-            if(patient.getAufnahmeDatum() == null){
+            if (patient.getAufnahmeDatum() == null) {
                 save = new Button("Patient im DB Speichern");
-                hb.getChildren().setAll(save,abbrechen);
+                hb.getChildren().setAll(save, abbrechen);
             }
 
             save.setOnAction(e -> {
-                if(!tfname.getText().isEmpty()  && !tfvor.getText().isEmpty()) {
+                if (!tfname.getText().isEmpty() && !tfvor.getText().isEmpty()) {
                     try {
-                        int haus = Integer.parseInt(tfhaussn.getText());
                         int plz = Integer.parseInt(tfpostalc.getText());
 
                         patient.setName(tfname.getText());
@@ -139,12 +145,16 @@ public class PatientenDatenGUI extends Stage {
                         patient.setTelefon(tftel.getText());
                         patient.setGender(genderComboBox.getValue());
                         patient.setStreet(tfstreet.getText());
-                        patient.setHousenumber(haus);
                         patient.setPostalcode(plz);
                         patient.setLocation(tflocation.getText());
                         if (ja.isSelected())
                             patient.setDeseased(true);
-                        control.updatePatient(patient);
+                        if (patient.getIdentifier() != 0) {
+                            control.updatePatient(patient);
+                        } else {
+                            control.addPatientDB(patient);
+                            int anzahlMediS =AddPAtientVomServerInDB(primaryStage,control,patient);
+                        }
                         control.setPatTableview();
                         close();
                     } catch (ParseException exx) {
@@ -167,7 +177,7 @@ public class PatientenDatenGUI extends Stage {
                         JOptionPane.showMessageDialog(null, formatter.toString());
                         formatter.close();
                     }
-                }else{
+                } else {
                     Formatter formatter = new Formatter();
                     formatter.format("Name oder Vorname ist Leer");
 
@@ -178,25 +188,24 @@ public class PatientenDatenGUI extends Stage {
 
             });
 
-        }else {
+        } else {
             save.setOnAction(e -> {
                 patient = new Patient();
                 if (!tfname.getText().isEmpty() && !tfvor.getText().isEmpty()) {
                     try {
                         //int tl = Integer.parseInt(tftel.getText());
-                        int haus = Integer.parseInt(tfhaussn.getText());
+
                         int plz = Integer.parseInt(tfpostalc.getText());
 
                         patient.setName(tfname.getText());
                         patient.setVorname(tfvor.getText());
-                       // System.out.println(tfgebD.getValue().toString());
+                        // System.out.println(tfgebD.getValue().toString());
                         //System.out.println(df.format(today));
                         patient.setGeburtsdatum(patient.stringToSqlDate(tfgebD.getValue().toString()));
                         patient.setGeburtsdatumS(tfgebD.getValue().toString());
                         patient.setTelefon(tftel.getText());
                         patient.setGender(genderComboBox.getValue());
                         patient.setStreet(tfstreet.getText());
-                        patient.setHousenumber(haus);
                         patient.setPostalcode(plz);
                         patient.setLocation(tflocation.getText());
                         patient.setAufnahmeDatum(patient.stringToSqlDate(df.format(today)));
@@ -205,7 +214,15 @@ public class PatientenDatenGUI extends Stage {
                         if (ja.isSelected())
                             patient.setDeseased(true);
                         try {
-                            control.addPatientDB(patient);
+                            boolean b = control.addPatientDB(patient);
+                            if (!b) {
+                                Formatter formatter = new Formatter();
+                                formatter.format("Patient schon Vorhanden");
+
+                                JOptionPane.showMessageDialog(null, formatter.toString());
+                                formatter.close();
+
+                            }
                         } catch (SQLException e1) {
                             e1.printStackTrace();
                         }
@@ -222,7 +239,7 @@ public class PatientenDatenGUI extends Stage {
 
                         JOptionPane.showMessageDialog(null, formatter.toString());
                         formatter.close();
-                }
+                    }
                 } else {
                     Formatter formatter = new Formatter();
                     formatter.format("Name oder Vorname ist Leer");
@@ -254,5 +271,47 @@ public class PatientenDatenGUI extends Stage {
 
     }
 
+    public static String inverseDate(String date) {
+        System.out.println("eingegeben date" + date);
+        String erg = "";
+        String day = date.charAt(8) + "" + date.charAt(9);
+        String month = date.charAt(6) + "" + date.charAt(7);
+        String year = date.charAt(0) + "" + date.charAt(1) + "" + date.charAt(2) + "" + date.charAt(3);
+        ;
+        erg = day + "-" + month + "-" + year;
+        System.out.println("Datum test 2 " + erg);
+        return erg;
+    }
 
+    /* Die Methode fügt alle Medikationstatememt der Patient im Server*/
+    public static int AddPAtientVomServerInDB(Stage primaryStage, Controller control, Patient patient) throws SQLException {
+        int anzahl = 0;
+        List<MedicationStatement> medSList = control.getMedSteServer(patient);
+        List<Medikament> medicaments = control.getMedikamentList();
+        if (medSList != null && medSList.size() > 0) {
+            for (int i = 0; i < medSList.size(); i++) {
+
+                Medikament med = null;
+
+                for (int j = 0; i < medicaments.size(); i++) {
+                    if (medSList.get(i).getCode() == medicaments.get(j).getCode()) {
+                        med = medicaments.get(i);
+                        break;
+                    }
+                }
+                if (med == null) {
+                    med = new Medikament();
+                    med.setCode(medSList.get(i).getCode());
+                    med.setName(medSList.get(i).getName());
+                    control.addMedicamentDB(med);
+                }
+                control.addMedikamenteDB(patient, med, medSList.get(i).getTaken(), medSList.get(i).getStatusStmt(), "", "", medSList.get(i).getDosage());
+           anzahl++;
+            }
+
+
+        }
+
+        return  anzahl;
+    }
 }

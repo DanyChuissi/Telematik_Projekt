@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.json.JSONException;
 import src.Fachlogik.MedicationStatement;
 import src.Fachlogik.Patient;
 import javafx.scene.image.Image;
@@ -54,7 +55,8 @@ public class PatientenverwaltungGUI extends Application {
         Button neuPatient = new Button("Patient Aufnehmen");
         Button suchen = new Button("Suchen");
         Button listPatient = new Button ("Patienten List");
-        TextField suchenFied = new TextField("Name oder Id eingeben");
+        TextField suchenFied = new TextField();
+        CheckBox Localsuche = new CheckBox("Nur Local Suche");
 
         //HauptBorderpane
         BorderPane hauptBp = new BorderPane();
@@ -80,7 +82,7 @@ public class PatientenverwaltungGUI extends Application {
         topBp.setLeft(hb2);
 
         hb.setAlignment(Pos.CENTER_LEFT);
-        hb.getChildren().addAll(suchenFied, suchen);
+        hb.getChildren().addAll(Localsuche, suchenFied, suchen);
 
         hb2.setAlignment(Pos.CENTER);
         hb2.getChildren().addAll(neuPatient, listPatient);
@@ -230,7 +232,12 @@ public class PatientenverwaltungGUI extends Application {
                     grid = getGrid(patient);
                     vboxPd.getChildren().setAll(labelpd, grid);
                     rechtBp.setCenter(vboxPd);
-                    control.setMedtabelviewBD(tvMedikamente, patient);
+                    if(patient.getIdentifier()!= 0) {
+                        control.setMedtabelviewBD(tvMedikamente, patient);
+                    }
+                    else{
+                        control.setMedtabelviewServer(tvMedikamente, patient);
+                    }
 
                     //clik on Button Medikamente Verwalten
                     updateMed.setOnAction(e -> {
@@ -331,59 +338,116 @@ public class PatientenverwaltungGUI extends Application {
 
         // Patiente Suchen
        suchen.setOnAction(e -> {
-            try {
-                int id = Integer.parseInt(suchenFied.getText());
-                List erg = control.suchMitId(id);
-                if(!erg.isEmpty()) {
-                    control.setPatTabelview(erg);
-                    grid = getGrid(null);
-                    vboxPd.getChildren().setAll(labelpd, grid);
-                    rechtBp.setCenter(vboxPd);
-                    control.setMedtabelviewBD(tvMedikamente, (Patient) null);
-                }else{
-                    Formatter formatter = new Formatter();
-                    formatter.format("ID " +id+ "nicht gefunden");
+           if(Localsuche.isSelected()) {
+               try {
+                   int id = Integer.parseInt(suchenFied.getText());
+                   List erg = control.suchMitId(id);
+                   if (!erg.isEmpty()) {
+                       control.setPatTabelview(erg);
+                       grid = getGrid(null);
+                       vboxPd.getChildren().setAll(labelpd, grid);
+                       rechtBp.setCenter(vboxPd);
+                       control.setMedtabelviewBD(tvMedikamente, (Patient) null);
+                   } else {
+                       Formatter formatter = new Formatter();
+                       formatter.format("ID " + id + "nicht gefunden");
 
-                    JOptionPane.showMessageDialog(null, formatter.toString());
-                    formatter.close();
-                }
+                       JOptionPane.showMessageDialog(null, formatter.toString());
+                       formatter.close();
+                   }
 
-                // Fall Formatieren eine Exeption wirf soll der Patetien nach der Name gesucht
-            }catch (NumberFormatException ee) {
+                   // Fall Formatieren eine Exeption wirf soll der Patetien nach der Name gesucht
+               } catch (NumberFormatException ee) {
 
-                try {
-                    List erg = control.suchMitName(suchenFied.getText());
-                    if(!erg.isEmpty()) {
-                        control.setPatTabelview(erg);
-                        grid = getGrid(null);
-                        vboxPd.getChildren().setAll(labelpd, grid);
-                        rechtBp.setCenter(vboxPd);
-                        control.setPatTabelview(erg);
-                        control.setMedtabelviewBD(tvMedikamente,(Patient) null);
-                    }
-                    else{
-                        Formatter formatter = new Formatter();
-                        formatter.format("Der Name " +suchenFied.getText()+ " ist nicht gefunden");
+                   try {
+                       List erg = control.suchMitName(suchenFied.getText());
+                       if (!erg.isEmpty()) {
+                           control.setPatTabelview(erg);
+                           grid = getGrid(null);
+                           vboxPd.getChildren().setAll(labelpd, grid);
+                           rechtBp.setCenter(vboxPd);
+                           control.setPatTabelview(erg);
+                           control.setMedtabelviewBD(tvMedikamente, (Patient) null);
+                       } else {
+                           Formatter formatter = new Formatter();
+                           formatter.format("Der Name " + suchenFied.getText() + " ist nicht gefunden");
 
-                        JOptionPane.showMessageDialog(null, formatter.toString());
-                        formatter.close();
-                    }
+                           JOptionPane.showMessageDialog(null, formatter.toString());
+                           formatter.close();
+                       }
 
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                } catch (NichtErlaubException e1) {
-                    e1.printStackTrace();
-                }
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            } catch (NichtErlaubException e1) {
-                e1.printStackTrace();
-            }
+                   } catch (SQLException e1) {
+                       e1.printStackTrace();
+                   } catch (NichtErlaubException e1) {
+                       e1.printStackTrace();
+                   }
+               } catch (SQLException e1) {
+                   e1.printStackTrace();
+               } catch (NichtErlaubException e1) {
+                   e1.printStackTrace();
+               }
 
+               Localsuche.setSelected(false);
+           }
+           else{
+               try {
+                   int id = Integer.parseInt(suchenFied.getText());
+                   List<Patient> erg = control.suchPatientmitIDServer(suchenFied.getText());
+                   if (erg != null) {
+                       if (erg.get(0) == null) {
+                           throw new NichtErlaubException();
+                       }
+                       control.setPatTabelview(erg);
+                       grid = getGrid(null);
+                       vboxPd.getChildren().setAll(labelpd, grid);
+                       rechtBp.setCenter(vboxPd);
+                       control.setMedtabelviewServer(tvMedikamente, erg.get(0));
+                   } else {
+                       Formatter formatter = new Formatter();
+                       formatter.format("ID " + id + " nicht gefunden");
 
-           // String name = suchenFied.getText();
+                       JOptionPane.showMessageDialog(null, formatter.toString());
+                       formatter.close();
+                   }
 
+               }catch (JSONException a){  // Fall Formatieren eine Exeption wirf soll der Patetien nach der Name gesucht
+                   Formatter formatter = new Formatter();
+                   formatter.format("ID " + suchenFied + " nicht gefunden");
+
+                   JOptionPane.showMessageDialog(null, formatter.toString());
+                   formatter.close();
+               } catch (NumberFormatException ee) {
+                   try {
+                       List erg = control.suchmitNameServer(suchenFied.getText());
+                       if (!erg.isEmpty()) {
+                           control.setPatTabelview(erg);
+                           grid = getGrid(null);
+                           vboxPd.getChildren().setAll(labelpd, grid);
+                           rechtBp.setCenter(vboxPd);
+                           control.setPatTabelview(erg);
+                           //control.setMedtabelviewServer(tvMedikamente, (Patient));
+                       } else {
+                           Formatter formatter = new Formatter();
+                           formatter.format("111Der Name " + suchenFied.getText() + " ist nicht gefunden");
+
+                           JOptionPane.showMessageDialog(null, formatter.toString());
+                           formatter.close();
+                       }
+                   }catch (JSONException eee){
+                       eee.printStackTrace();
+                       Formatter formatter = new Formatter();
+                       formatter.format("Der Name " + suchenFied.getText() + " ist nicht gefunden");
+
+                       JOptionPane.showMessageDialog(null, formatter.toString());
+                       formatter.close();
+                   }
+                     Localsuche.setSelected(false);
+                      } catch (NichtErlaubException e1) {
+                   e1.printStackTrace();
+               }
+           }
         });
+
 
        // Nach dem eine Patient gesucht worden ist. kann es mit diese Button auf die Pateiten Liste zurüch
         listPatient.setOnAction(e -> {
@@ -444,7 +508,7 @@ public class PatientenverwaltungGUI extends Application {
             Label idnummerV = new Label("" + p.getIdentifier());
             Label idServerV = new Label(""+p.getIdServer());
             Label gebDatumV = new Label("" + p.getGeburtsdatumS());
-            Label strasseV = new Label(p.getStreet() + ", " + p.getHousenumber());
+            Label strasseV = new Label(p.getStreet());
             Label stadtV = new Label(p.getPostalcode() + ", " + p.getLocation());
             Label telV = new Label("" + p.getTelefon());
             Label genderV = new Label("" + p.getGender());
@@ -483,14 +547,14 @@ public class PatientenverwaltungGUI extends Application {
             grid.add(entlassdV, 1, 12);
 
             grid.add(hb, 1, 13);
-            grid.add(remove, 1,14);
 
-            if(p.getEntlassungStatus() == false){
+            if(p.getIdentifier()!= 0){
+                grid.add(remove, 1,14);
+            }
+            if(p.getEntlassungStatus() == false  && p.getIdentifier() != 0){
                 Button entlassen = new Button("Entlassen");
                 this.entlassen = entlassen;
                 grid.add(entlassen, 0, 13);
-
-
             }
         }
 

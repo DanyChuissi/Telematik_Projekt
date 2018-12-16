@@ -11,7 +11,7 @@ package src.Fachlogik;
 
 public class Patient {
 
-    private int idServer;
+    private String idServer;
     private int identifier;
     private boolean active = false;
     private String name;
@@ -25,7 +25,6 @@ public class Patient {
     private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private boolean deseased;
     private String Street;
-    private int Housenumber;
     private String location;
     private int postalcode;
     private java.sql.Date aufnahmeDatum;
@@ -39,11 +38,11 @@ public class Patient {
         medicament = new LinkedList<MedicationStatement>();
     }
 
-    public int getIdServer() {
+    public String getIdServer() {
         return idServer;
     }
 
-    public void setIdServer(int idServer) {
+    public void setIdServer(String idServer) {
         this.idServer = idServer;
     }
 
@@ -135,14 +134,6 @@ public class Patient {
     public String getTelefon()
     {
         return telefon;
-    }
-
-    public int getHousenumber() {
-        return Housenumber;
-    }
-
-    public void setHousenumber(int housenumber) {
-        Housenumber = housenumber;
     }
 
     public java.sql.Date getAufnahmeDatum() {
@@ -250,7 +241,7 @@ public class Patient {
         return enlassungStatus;
     }
     public String getAdresse(){
-        return String.format("%s %d, %d %s", this.getStreet(), this.getHousenumber(),this.getPostalcode(),this.getLocation());
+        return String.format("%s, %d %s", this.getStreet(),this.getPostalcode(),this.getLocation());
     }
 }
 

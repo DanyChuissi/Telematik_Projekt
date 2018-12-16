@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
 import src.Fachlogik.MedicationStatement;
 import src.Fachlogik.Medikament;
 import src.Fachlogik.Patient;
@@ -21,7 +22,7 @@ public class Krankenhaus {
     private Patient patient = null;
     private Medikament medicament;
     private MedicationStatement medicationStatement;
-   // private DateFormat df = new SimpleDateFormat("YYYY-MM-DD");
+    private DateFormat df = new SimpleDateFormat("YYYY-MM-DD");
     Connection conn = null;
     String url = "jdbc:mysql://localhost:3306/krankenhaus?serverTimezone=MET";
 
@@ -46,15 +47,25 @@ public class Krankenhaus {
             e.printStackTrace();
         }
     }
-    public void addPatientDB(Patient p) throws SQLException {
+    public boolean addPatientDB(Patient p) throws SQLException {
         conn.setAutoCommit(false);
-        String insert = "INSERT INTO patient(name, vorname,gender,telefon,birthdate, deseased,street,housenumber, location, postalcode,aufnahmeDatum ,entlassungStatus, idServer) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+       /* if(p.getAufnahmeDatum() == null) {
+            try {
+                p.setGeburtsdatum(p.stringToSqlDate(inverseDate(p.getGeburtsdatumS())));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }*/
+        String insert = "INSERT INTO patient(name, vorname,gender,telefon,birthdate, deseased,Street, location, postalcode,aufnahmeDatum ,entlassungStatus, idServer) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
+        boolean b = false;
         try {
-            String str="2015-03-31";
-            Date date=Date.valueOf(str);
+          /*  String str="2015-03-31";
+            Date date=Date.valueOf(str);*/
             ps = conn.prepareStatement(insert);
 
+            /*Wird vervendet fall Patient vom Server un aufnahme Datum = null*/
+            java.sql.Date date = new java.sql.Date(Calendar.getInstance().getTime().getTime());
             ps.setString(1, p.getName());
             ps.setString(2, p.getVorname());
             ps.setString(3, p.getGender());
@@ -62,23 +73,34 @@ public class Krankenhaus {
             ps.setDate(5, Date.valueOf(p.getGeburtsdatumS()));
             ps.setBoolean(6, p.getDeseased());
             ps.setString(7, p.getStreet());
-            ps.setInt(8, p.getHousenumber());
-            ps.setString(9, p.getLocation());
-            ps.setInt(10, p.getPostalcode());
-            ps.setDate(11,p.stringToSqlDate(p.getAufnahmeDatumS()));
-            ps.setBoolean(12, p.getEntlassungStatus());
-            ps.setInt(13,p.getIdServer());
+            ps.setString(8, p.getLocation());
+            ps.setInt(9, p.getPostalcode());
+            if(p.getAufnahmeDatum()== null) {
+               p.setAufnahmeDatum(date);
+            }
+            ps.setDate(10,p.getAufnahmeDatum());
+            ps.setBoolean(11, p.getEntlassungStatus());
+            ps.setString(12,p.getIdServer());
 
             ps.execute();
             conn.commit();
-
-        } catch (SQLException | ParseException e) {
+            b = true;
+  System.out.println("krnakenhaus. Methise Zeile 74");
+        } catch (SQLException e) {
+            if(e.getMessage().contains("Insert not allowed")) {
+                System.out.println(false);
+                e.printStackTrace();
+                return b;
+            }
             e.printStackTrace();
+            b = false;
         }
+
+        return b;
     }
 
     /* Diese Methode fügt einen Medikament in der Datenbank*/
-    public void addMedikamentDB(Medikament m) throws SQLException {
+    public boolean addMedikamentDB(Medikament m) throws SQLException {
         conn.setAutoCommit(false);
         String insert = "INSERT INTO medicament(name, code,isOvercounter,form,manufacturer, status,idServer) VALUES(?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
@@ -91,14 +113,16 @@ public class Krankenhaus {
             ps.setString(4, m.getForm());
             ps.setString(5, m.getManufacturer());
             ps.setString(6, m.getStatusMed());
-            ps.setInt(7, m.getIdServer());
+            ps.setString(7, m.getIdServer());
 
             ps.execute();
             conn.commit();
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
 
@@ -125,13 +149,12 @@ public class Krankenhaus {
                 patient.setGeburtsdatum(rs.getDate(7));
                 patient.setDeseased(rs.getBoolean(8));
                 patient.setStreet(rs.getString(9));
-                patient.setHousenumber(rs.getInt(10));
-                patient.setLocation(rs.getString(11));
-                patient.setPostalcode(rs.getInt(12));
-                patient.setAufnahmeDatum(rs.getDate(13));
-                patient.setEntlassungsDatum(rs.getDate(14));
-                patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getInt(16));
+                patient.setLocation(rs.getString(10));
+                patient.setPostalcode(rs.getInt(11));
+                patient.setAufnahmeDatum(rs.getDate(12));
+                patient.setEntlassungsDatum(rs.getDate(13));
+                patient.setEnlassungStatus(rs.getBoolean(14));
+                patient.setIdServer(rs.getString(15));
                 break GETLASTINSERTED;//to read only the last row
             }
         }catch (SQLException e){
@@ -189,13 +212,12 @@ public class Krankenhaus {
                 patient.setGeburtsdatum(rs.getDate(7));
                 patient.setDeseased(rs.getBoolean(8));
                 patient.setStreet(rs.getString(9));
-                patient.setHousenumber(rs.getInt(10));
-                patient.setLocation(rs.getString(11));
-                patient.setPostalcode(rs.getInt(12));
-                patient.setAufnahmeDatum(rs.getDate(13));
-                patient.setEntlassungsDatum(rs.getDate(14));
-                patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getInt(16));
+                patient.setLocation(rs.getString(10));
+                patient.setPostalcode(rs.getInt(11));
+                patient.setAufnahmeDatum(rs.getDate(12));
+                patient.setEntlassungsDatum(rs.getDate(13));
+                patient.setEnlassungStatus(rs.getBoolean(14));
+                patient.setIdServer(rs.getString(15));
 
                 list.add(patient);
 
@@ -230,13 +252,12 @@ public class Krankenhaus {
                 patient.setGeburtsdatum(rs.getDate(7));
                 patient.setDeseased(rs.getBoolean(8));
                 patient.setStreet(rs.getString(9));
-                patient.setHousenumber(rs.getInt(10));
-                patient.setLocation(rs.getString(11));
-                patient.setPostalcode(rs.getInt(12));
-                patient.setAufnahmeDatum(rs.getDate(13));
-                patient.setEntlassungsDatum(rs.getDate(14));
-                patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getInt(16));
+                patient.setLocation(rs.getString(10));
+                patient.setPostalcode(rs.getInt(11));
+                patient.setAufnahmeDatum(rs.getDate(12));
+                patient.setEntlassungsDatum(rs.getDate(13));
+                patient.setEnlassungStatus(rs.getBoolean(14));
+                patient.setIdServer(rs.getString(15));
             }
 
 
@@ -292,7 +313,7 @@ public class Krankenhaus {
                 medicament.setForm(rs.getString(5));
                 medicament.setManufacturer(rs.getString(6));
                 medicament.setStatusMed(rs.getString(7));
-                medicament.setIdServer(rs.getInt(8));
+                medicament.setIdServer(rs.getString(8));
             }
 
 
@@ -324,13 +345,12 @@ public class Krankenhaus {
                 patient.setGeburtsdatum(rs.getDate(7));
                 patient.setDeseased(rs.getBoolean(8));
                 patient.setStreet(rs.getString(9));
-                patient.setHousenumber(rs.getInt(10));
-                patient.setLocation(rs.getString(11));
-                patient.setPostalcode(rs.getInt(12));
-                patient.setAufnahmeDatum(rs.getDate(13));
-                patient.setEntlassungsDatum(rs.getDate(14));
-                patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getInt(16));
+                patient.setLocation(rs.getString(10));
+                patient.setPostalcode(rs.getInt(11));
+                patient.setAufnahmeDatum(rs.getDate(12));
+                patient.setEntlassungsDatum(rs.getDate(13));
+                patient.setEnlassungStatus(rs.getBoolean(14));
+                patient.setIdServer(rs.getString(15));
                 list.add(patient);
 
             }
@@ -364,13 +384,12 @@ public class Krankenhaus {
                 patient.setGeburtsdatum(rs.getDate(7));
                 patient.setDeseased(rs.getBoolean(8));
                 patient.setStreet(rs.getString(9));
-                patient.setHousenumber(rs.getInt(10));
-                patient.setLocation(rs.getString(11));
-                patient.setPostalcode(rs.getInt(12));
-                patient.setAufnahmeDatum(rs.getDate(13));
-                patient.setEntlassungsDatum(rs.getDate(14));
-                patient.setEnlassungStatus(rs.getBoolean(15));
-                patient.setIdServer(rs.getInt(16));
+                patient.setLocation(rs.getString(10));
+                patient.setPostalcode(rs.getInt(11));
+                patient.setAufnahmeDatum(rs.getDate(12));
+                patient.setEntlassungsDatum(rs.getDate(13));
+                patient.setEnlassungStatus(rs.getBoolean(14));
+                patient.setIdServer(rs.getString(15));
 
                 list.add(patient);
 
@@ -411,7 +430,7 @@ public class Krankenhaus {
                 medicationStatement.setManufacturer(rs.getString(9));
                 medicationStatement.setPrescription(rs.getBoolean(10));
                 medicationStatement.setStatusStmt((rs.getString(11)));
-                medicationStatement.setIdServer(rs.getInt(12));
+                medicationStatement.setIdServer(rs.getString(12));
 
             }
         } catch (SQLException e) {
@@ -443,7 +462,7 @@ public class Krankenhaus {
                 medicationStatement.setStatusStmt((rs.getString(6)));
                 medicationStatement.setPeriode(rs.getString(7));
                 medicationStatement.setDosage(rs.getString(8));
-                medicationStatement.setIdServer(rs.getInt(9));
+                medicationStatement.setIdServer(rs.getString(9));
 
 
                 med = getMedicament(rs.getInt(3));
@@ -482,7 +501,7 @@ public class Krankenhaus {
                 medicament.setForm(rs.getString(5));
                 medicament.setManufacturer(rs.getString(6));
                 medicament.setStatusMed(rs.getString(7));
-                medicament.setIdServer(rs.getInt(8));
+                medicament.setIdServer(rs.getString(8));
                 list.add(medicament);
             }
 
@@ -495,7 +514,7 @@ public class Krankenhaus {
     public void updatepaDaten(Patient p) throws SQLException {
         conn.setAutoCommit(false);
         int id = p.getIdentifier();
-        String updatePa = "UPDATE patient SET  name = ?, vorname = ?,gender = ?,active = ?,telefon = ?,birthdate = ?, deseased = ?,street = ?,housenumber = ?, location = ?, postalcode = ?, aufnahmeDatum = ?, entlassungsDatum = ? ,entlassungStatus = ? idServer = ? WHERE identifier = " + id;
+        String updatePa = "UPDATE patient SET  name = ?, vorname = ?,gender = ?,active = ?,telefon = ?,birthdate = ?, deseased = ?,Street= ?, location = ?, postalcode = ?, aufnahmeDatum = ?, entlassungsDatum = ? ,entlassungStatus = ?, idServer = ? WHERE identifier = " + id;
         PreparedStatement ps = null;
 
         try {
@@ -510,13 +529,27 @@ public class Krankenhaus {
             ps.setDate(6, (Date) patient.getGeburtsdatum());
             ps.setBoolean(7, patient.getDeseased());
             ps.setString(8, patient.getStreet());
-            ps.setInt(9, patient.getHousenumber());
-            ps.setString(10, patient.getLocation());
-            ps.setInt(11, patient.getPostalcode());
-            ps.setDate(12, (Date) patient.getAufnahmeDatum());
-            ps.setDate(13, (Date) patient.getEntlassungsdatum());
-            ps.setBoolean(14, patient.getEntlassungStatus());
-            ps.setInt(15,patient.getIdServer());
+            ps.setString(9, patient.getLocation());
+            ps.setInt(10, patient.getPostalcode());
+            ps.setDate(11, (Date) patient.getAufnahmeDatum());
+            ps.setDate(12, (Date) patient.getEntlassungsdatum());
+            ps.setBoolean(13, patient.getEntlassungStatus());
+            ps.setString(14,patient.getIdServer());
+
+           System.out.println(patient.getName());
+            System.out.println( patient.getVorname());
+            System.out.println( patient.getGender());
+            System.out.println( patient.getActive());
+            System.out.println(patient.getTelefon());
+            System.out.println((Date) patient.getGeburtsdatum());
+            System.out.println(patient.getDeseased());
+            System.out.println( patient.getStreet());
+            System.out.println( patient.getLocation());
+            System.out.println( patient.getPostalcode());
+            System.out.println( (Date) patient.getAufnahmeDatum());
+            System.out.println( (Date) patient.getEntlassungsdatum());
+            System.out.println( patient.getEntlassungStatus());
+            System.out.println(patient.getIdServer());
 
             ps.executeUpdate();
             conn.commit();
@@ -582,7 +615,7 @@ public class Krankenhaus {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+   /* public static void main(String[] args) throws Exception {
         Patient pa = null;
         Medikament me = null;
         Krankenhaus kr = new Krankenhaus();
@@ -615,7 +648,17 @@ public class Krankenhaus {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
+    public static String inverseDate(String date){
+        System.out.println("eingegeben date"+ date);
+        String erg = "";
+        String day = date.charAt(8)+""+date.charAt(9);
+        String month = date.charAt(5)+""+date.charAt(6);
+        String year = date.charAt(0)+""+date.charAt(1)+""+ date.charAt(2)+""+date.charAt(3);;
+        erg = day + "-" + month+"-"+year;
+        System.out.println("Datum test 2 "+ erg);
+        return erg;
+    }
 
 }

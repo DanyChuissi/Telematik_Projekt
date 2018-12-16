@@ -26,11 +26,13 @@ public class MedikanmenteverwaltungGUI extends Stage {
     private MedicationStatement medS;
 
 
-    public MedikanmenteverwaltungGUI(Stage primaryStage, Patient patient, Controller control, MedicationStatement medS) {
+
+    public MedikanmenteverwaltungGUI(Stage primaryStage, Patient patient, Controller control, MedicationStatement medS ) {
         this.primaryStage = primaryStage;
         this.patient = patient;
         this.control = control;
         this.medS = medS;
+
     }
 
 
@@ -57,9 +59,10 @@ public class MedikanmenteverwaltungGUI extends Stage {
             ComboBox<String> codeComboBox = new ComboBox<String>();
             List<Medikament> tmp = control.getMedikamentList();
             for(int i = 0; i < tmp.size(); i++){
-                codeComboBox.getItems().add(tmp.get(i).getName());
+                codeComboBox.getItems().add(tmp.get(i).getCode());
             }
             ComboBox<String> dosageComboBox = new ComboBox<String>();
+            dosageComboBox.setEditable(true);
             dosageComboBox.getItems().addAll( "1 x täglich" , "2 x täglich" , "3 x täglich" , "4 x täglich");
             DatePicker vonV = new DatePicker(LocalDate.now());
             DatePicker bisV = new DatePicker(LocalDate.now());
@@ -112,8 +115,8 @@ public class MedikanmenteverwaltungGUI extends Stage {
                 hb2.getChildren().add(remove);
 
                 grid.add(hb2,1,11);
+                if(medS.getMedikament() != null){codeComboBox.setValue(medS.getMedikament().getCode());};
 
-                codeComboBox.setValue(medS.getMedikament().getCode());
                 dosageComboBox.setValue(medS.getDosage());
                 //vonV.setValue(medS.getVon(medS.getPeriode()));
                 //bisV.setValue(medS.getBis(medS.getPeriode()));
@@ -146,6 +149,10 @@ public class MedikanmenteverwaltungGUI extends Stage {
                             med = tmp.get(i);
                         }
                     }
+                  /*  if(patient.getIdentifier() == 0 && med == null){
+                        med.setName(medS.getName());
+
+                    }*/
                     if(patient != null && med != null  && !takenComboBox.getSelectionModel().isEmpty() && !statusComboBox.getSelectionModel().isEmpty()) {
 
 
