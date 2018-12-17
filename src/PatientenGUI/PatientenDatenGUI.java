@@ -110,6 +110,8 @@ public class PatientenDatenGUI extends Stage {
         grid.add(hbCheck, 1, 8);
         grid.add(hb, 1, 9);
 
+        // Die Methode wird aufgerufen wenn es auf "neuPAtient geclikt wird oder auf einen Patient in der Patienten List
+        //Hier wird geprüft, ob es auf einen Patient geclickt worden ist
         if (patient != null) {
             tfname.setText(patient.getName());
             tfvor.setText(patient.getVorname());
@@ -197,7 +199,9 @@ public class PatientenDatenGUI extends Stage {
 
             });
 
-        } else {
+        }
+        // Falls der Patient == null wird ein neuen Patient erstellt
+        else {
             save.setOnAction(e -> {
                 patient = new Patient();
                 if (!tfname.getText().isEmpty() && !tfvor.getText().isEmpty()) {
@@ -280,7 +284,8 @@ public class PatientenDatenGUI extends Stage {
 
     }
 
-    public static String inverseDate(String date) {
+
+    /*public static String inverseDate(String date) {
         System.out.println("eingegeben date" + date);
         String erg = "";
         String day = date.charAt(8) + "" + date.charAt(9);
@@ -291,8 +296,19 @@ public class PatientenDatenGUI extends Stage {
         System.out.println("Datum test 2 " + erg);
         return erg;
     }
+*/
 
-    /* Die Methode fügt alle Medikationstatememt der Patient im Server*/
+    /**
+     * die Methode prüft ob der Patient Medikament Statement hat, falls das der Fall ist, werden die Medikamente Stateemtn der Patient
+     * in DB eingefugt.
+     * Fall der Medikament im DB nicht vorhanden ist, wird der Medikament zuerst im DB ein gefügt und dann
+     * der Medikament Statement
+     * @param primaryStage
+     * @param control
+     * @param patient
+     * @return Boolean
+     * @throws SQLException
+     */
     public static boolean AddPAtientVomServerInDB(Stage primaryStage, Controller control, Patient patient) throws SQLException {
         List<MedicationStatement> medSList = control.getMedSteServer(patient);
         List<Medikament> medicaments = control.getMedikamentList();

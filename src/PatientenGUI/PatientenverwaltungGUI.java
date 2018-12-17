@@ -14,11 +14,9 @@ import javafx.stage.Stage;
 import org.json.JSONException;
 import src.Fachlogik.MedicationStatement;
 import src.Fachlogik.Patient;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,10 +73,6 @@ public class PatientenverwaltungGUI extends Application {
         hb2.setSpacing(10.0);
         hb3.setSpacing(10.0);
 
-        File file = new File("src/medLogo.png");
-        Image image = new Image(file.toURI().toString());
-        ImageView imageView = new ImageView(image);
-
         topBp.setRight(hb);
         topBp.setLeft(hb2);
 
@@ -88,8 +82,6 @@ public class PatientenverwaltungGUI extends Application {
         hb2.setAlignment(Pos.CENTER);
         hb2.getChildren().addAll(neuPatient, listPatient);
 
-        hb3.setAlignment(Pos.CENTER_LEFT);
-        hb3.getChildren().addAll(imageView);
 
         // Mittlere Bordepane
         final Label labelp = new Label("Patienten");
@@ -233,21 +225,26 @@ public class PatientenverwaltungGUI extends Application {
                     grid = getGrid(patient);
                     vboxPd.getChildren().setAll(labelpd, grid);
                     rechtBp.setCenter(vboxPd);
+                    //wenn Patiente aus DB kommt
                     if(patient.getIdentifier()!= 0) {
+                        // b = true wenn patiente Medikation hat
                         boolean b = control.setMedtabelviewBD(tvMedikamente, patient);
                         if(!b){
                             tvMedikamente.setPlaceholder(new Label("Patient "+ patient.getVollName()+" hat keine Medikamente"));
                         }
                     }
+                    // wenn Patiente aus dem Server kommt
                     else{
+                        // P = true wenn Patiente Medikation hast
                         boolean b = control.setMedtabelviewServer(tvMedikamente, patient);
                         if(!b){
-                            tvMedikamente.setPlaceholder(new Label("Patient " +patient.getVollName()+"hat keine Medikamente"));
+                            tvMedikamente.setPlaceholder(new Label("Patient " +patient.getVollName()+" hat keine Medikamente"));
                         }
                     }
 
                     //clik on Button Medikamente Verwalten
                     updateMed.setOnAction(e -> {
+                        // wenn der Patient entlassen ist kann er keine Medikament mehr zugewiesen werden
                         if(patient.getEntlassungStatus() != true) {
                             MedikanmenteverwaltungGUI mv = new MedikanmenteverwaltungGUI(primaryStage, patient, control, null);
                             mv.showView(tvMedikamente);
@@ -264,6 +261,10 @@ public class PatientenverwaltungGUI extends Application {
 
                     // Patiente Löschen
                     remove.setOnAction(e -> {
+                        /*zurzeit wird die If Anweisung immer ausgefüht
+                          Beim verwenden der Periode, soll keine Patiente entlassen werden wenn et Medikamente am laufen hat
+                          d.h wenn die End zeit der Medikation noch nicht erreich ict
+                         */
                         if(control.getMedStat(patient).size() >= 0) {
                             try {
                                 int reply = JOptionPane.showConfirmDialog(null, "Der Patient wird Jetzt vom DatenBank gelöscht", "Hinweis", JOptionPane.YES_NO_OPTION);
@@ -345,8 +346,10 @@ public class PatientenverwaltungGUI extends Application {
 
         // Patiente Suchen
        suchen.setOnAction(e -> {
+           // wenn Localsuche selectet ist wird nur im Lokale DB gesucht
            if(Localsuche.isSelected()) {
                try {
+                   //Falls parseInt keine Exception wirf, wird der Patient nach ID gesucht
                    int id = Integer.parseInt(suchenFied.getText());
                    List erg = control.suchMitId(id);
                    if (!erg.isEmpty()) {
@@ -399,8 +402,10 @@ public class PatientenverwaltungGUI extends Application {
 
                Localsuche.setSelected(false);
            }
+           //Wenn Localsuche nicht false ist, wird der Patient automatich im Server gesucht
            else{
                try {
+                   //Patient wird im Server nach ID gesucht falls parseInt keine Exception wirf
                    int id = Integer.parseInt(suchenFied.getText());
                    try {
                        List<Patient> erg = control.suchPatientmitIDServer(suchenFied.getText());
@@ -425,7 +430,7 @@ public class PatientenverwaltungGUI extends Application {
                        }
                    }catch (RuntimeException w){
                        Formatter formatter = new Formatter();
-                       formatter.format("ID " + suchenFied + " nicht gefunden");
+                       formatter.format("ID " + suchenFied.getText() + " nicht gefunden");
 
                        JOptionPane.showMessageDialog(null, formatter.toString());
                        formatter.close();
@@ -433,11 +438,12 @@ public class PatientenverwaltungGUI extends Application {
 
                }catch (JSONException  a){  // Fall Formatieren eine Exeption wirf soll der Patetien nach der Name gesucht
                    Formatter formatter = new Formatter();
-                   formatter.format("ID " + suchenFied + " nicht gefunden");
+                   formatter.format("ID " + suchenFied.getText() + " nicht gefunden");
 
                    JOptionPane.showMessageDialog(null, formatter.toString());
                    formatter.close();
                }
+               // Patient wird im Server nach name gescuht falls Parse Int eine Exeption wirf
                catch (NumberFormatException ee) {
                    try {
                        List erg = control.suchmitNameServer(suchenFied.getText());

@@ -106,6 +106,8 @@ public class MedikanmenteverwaltungGUI extends Stage {
 
             grid.add(hb, 1, 10);
 
+            // Beim Clik auf "Medikamente Verwalten" oder auf eien MedikamenteStatement wird diese Klasse aufgeruft
+            //der If Anweisung prüf ob es auf eine Medikament geclickt worden ist
             if(medS != null){
                 Button remove = new Button("löschen");
                 remove.setStyle("-fx-border-color: #ff0000; -fx-border-width: 3px");
@@ -124,6 +126,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
                 statusComboBox.setValue(medS.getStatusStmt());
                 noteV.setText(medS.getNote());
 
+                // Mit diese setOnAction kann ein Medikation Statement gelöscht werden
                 remove.setOnAction(e -> {
                     try {
                         control.loescheMedStatement(medS);
@@ -142,6 +145,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
                     close();
                 });
 
+                // Die angegebene Änderungen werden gespeichert
                 save.setOnAction(e -> {
                     Medikament med = new Medikament();
                     if(!codeComboBox.getSelectionModel().isEmpty() ) {
@@ -195,6 +199,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
                     }
                 });
             }
+            //Falls Medikament Stateemnt == null wird ein neue Medikament Statement erstellt
             else {
 
                 save.setOnAction(e -> {
@@ -211,7 +216,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
                             medS.setPeriodevonbis(vonV.getValue().toString(), bisV.getValue().toString());
                             try {
                                 control.addMedikamenteDB(patient, med, takenComboBox.getValue(), statusComboBox.getValue(), medS.getPeriode(),noteV.getText(), dosageComboBox.getValue() );
-                                control.setMedTableview(tv, patient);
+                                control.setMedtabelviewBD(tv, patient);
                             } catch (SQLException e1) {
                                 e1.printStackTrace();
                             }

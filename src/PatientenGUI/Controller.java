@@ -13,6 +13,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Die Klasse Controller verbindet die Faklogic und die GUI
+ */
 public class Controller {
 
     private TableView tv;
@@ -34,11 +37,24 @@ public class Controller {
         this.kr = new Krankenhaus();
     }
 
+    /**
+     * Patient wird über den Controller mit dem ID im Server gesucht
+     * @param Id
+     * @return
+     * @throws JSONException
+     * @throws RuntimeException
+     */
+
     public List<Patient> suchPatientmitIDServer(String Id) throws JSONException, RuntimeException {
         List<Patient> erg = new ArrayList<>();
         erg.add(krServ.getPatientbyId(Id));
         return  erg;
     }
+
+    /**
+     * Die Methode gibt eien Liste zurück mit alle Medikamente die im Server sind
+     * @return List Medikament
+     */
 
     public List<Medikament> getMedikamentList(){
         try {
@@ -49,10 +65,20 @@ public class Controller {
         return null;
     }
 
+    /**
+     * Über dem Controlller wird ein Patient im DB Gelöscht
+     * @param p
+     * @throws SQLException
+     */
+
     public void loeschePatientFromDB(Patient p) throws SQLException {
         kr.patientLoeschen(p);
     }
 
+    /**
+     * Die Methose lädt alle patient, die im DB sind..
+     * @return
+     */
     public List<Patient> ladePatientDB() {
         this.kr = new Krankenhaus();
         kr.connect();
@@ -75,7 +101,13 @@ public class Controller {
     }
 
 
-
+    /**
+     * Die Methode aktualisiert die TableView und zeigt nur die Medikament der Patient, der als Parameter übergeben wird
+     * gibt falls zrück falls der patient kein Medikation hast
+     * @param tv
+     * @param p
+     * @return boolean
+     */
     public boolean setMedtabelviewServer(TableView<MedicationStatement> tv, Patient p) {
         tvMed = tv;
         tvMed.getItems().clear();
@@ -101,7 +133,12 @@ public class Controller {
     }
 
 
-
+    /**
+     * Patient wird über den Controller im Server mit Name gesucht
+     * @param name
+     * @return
+     * @throws JSONException
+     */
     public List<Patient> suchmitNameServer(String name) throws JSONException {
         return krServ.getPatientbyName(name);
     }
@@ -111,12 +148,35 @@ public class Controller {
 
 
     // Methode der DB
+
+    /**
+     * Die Daten der MedikamenteStateemnt, der im Parameter übergeben wird werden im DB aktualisiert
+     * @param med
+     * @return
+     * @throws SQLException
+     */
     public MedicationStatement updateMedDaten(MedicationStatement med) throws SQLException {
         return  kr.updateMeDaten(med);
     }
+
+    /**
+     * Die Methode gibt der letzte eingefügte Patient zurück
+     * @return
+     * @throws SQLException
+     * @throws NichtErlaubException
+     */
     public Patient getLastInsertedDB() throws SQLException, NichtErlaubException {
         return kr.getLastInserted();
     }
+
+    /**
+     * die Methode fügt ein Patient im DB
+     * gibt false zurüch wenn der Patient nicht eingefügt werden könnte
+     * z.B wenn der Patient schon existiert
+     * @param neu
+     * @return
+     * @throws SQLException
+     */
     public boolean addPatientDB(Patient neu) throws SQLException {
         boolean b =  kr.addPatientDB(neu);
         System.out.println("Addpatient Controller zeilr 78");
@@ -131,12 +191,36 @@ public class Controller {
         return b;
     }
 
+    /**
+     * Die Methode sucht alle Medikamente Stement einene patiente zurück
+     * @param p
+     * @return
+     */
     public List<MedicationStatement> getMedSteServer(Patient p){
         return krServ.getMedikamentStatementbyPatient(p.getIdServer());
     }
+
+    /**
+     * Die Methode fügt Medikamente im DB
+     * @param m
+     * @return
+     * @throws SQLException
+     */
     public boolean addMedicamentDB(Medikament m) throws SQLException {
         return kr.addMedikamentDB(m);
     }
+
+    /**
+     * Die Methode fügt ein Medikamente Statement im DB Mit alle Parameter, die übergeben werden
+     * @param p
+     * @param med
+     * @param taken
+     * @param status
+     * @param period
+     * @param note
+     * @param dosage
+     * @throws SQLException
+     */
 
     public void addMedikamenteDB(Patient p, Medikament med, String taken, String status, String period, String note, String dosage) throws SQLException {
         kr.addMedikamentStatement(p, med,taken,status, period, note, dosage);
@@ -144,17 +228,25 @@ public class Controller {
         //setMedTableview(tv , p);
     }
 
+    /**
+     * die Methose gibt der Letzte Medikamente, der im Db eingefugt ist zurück
+     * @return
+     * @throws SQLException
+     * @throws NichtErlaubException
+     */
+
     public Medikament getLastMedInserted() throws SQLException, NichtErlaubException {
         return kr.getLastInsertedMed();
     }
-    public void setMedTableview( TableView tv, Patient p){
+
+ /*   public void setMedTableview( TableView tv, Patient p){
         // tvMed = tv;
         //tvMed.getItems().clear();
         //tv.setItems(obsListMed);
         obsListMed.add(p.getMedicament());
 
         // tv.getItems().addAll(p.getMedicament());
-    }
+    }*/
 
     public void updatePatient(Patient patient) throws SQLException {
         kr.updatepaDaten(patient);
