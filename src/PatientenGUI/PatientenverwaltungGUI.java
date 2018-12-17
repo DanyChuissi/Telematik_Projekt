@@ -18,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -180,9 +181,9 @@ public class PatientenverwaltungGUI extends Application {
         prescriptCol.setMinWidth(100);
         prescriptCol.setCellValueFactory(new PropertyValueFactory<>("prescription"));
 
-        TableColumn manufacturerCol = new TableColumn("Manufacturer");
+        TableColumn manufacturerCol = new TableColumn("Code");
         manufacturerCol.setMinWidth(100);
-        manufacturerCol.setCellValueFactory(new PropertyValueFactory<>("manufacturer"));
+        manufacturerCol.setCellValueFactory(new PropertyValueFactory<>("code"));
 
         TableColumn noteCol = new TableColumn("Note");
         noteCol.setMinWidth(200);
@@ -233,10 +234,16 @@ public class PatientenverwaltungGUI extends Application {
                     vboxPd.getChildren().setAll(labelpd, grid);
                     rechtBp.setCenter(vboxPd);
                     if(patient.getIdentifier()!= 0) {
-                        control.setMedtabelviewBD(tvMedikamente, patient);
+                        boolean b = control.setMedtabelviewBD(tvMedikamente, patient);
+                        if(!b){
+                            tvMedikamente.setPlaceholder(new Label("Patient "+ patient.getVollName()+" hat keine Medikamente"));
+                        }
                     }
                     else{
-                        control.setMedtabelviewServer(tvMedikamente, patient);
+                        boolean b = control.setMedtabelviewServer(tvMedikamente, patient);
+                        if(!b){
+                            tvMedikamente.setPlaceholder(new Label("Patient " +patient.getVollName()+"hat keine Medikamente"));
+                        }
                     }
 
                     //clik on Button Medikamente Verwalten
@@ -347,7 +354,10 @@ public class PatientenverwaltungGUI extends Application {
                        grid = getGrid(null);
                        vboxPd.getChildren().setAll(labelpd, grid);
                        rechtBp.setCenter(vboxPd);
-                       control.setMedtabelviewBD(tvMedikamente, (Patient) null);
+                       boolean b = control.setMedtabelviewBD(tvMedikamente, (Patient) null);
+                       if(!b){
+                           tvMedikamente.setPlaceholder(new Label("Patient mit ID: "+ suchenFied.getText()+" hat keine Medikamente"));
+                       }
                    } else {
                        Formatter formatter = new Formatter();
                        formatter.format("ID " + id + "nicht gefunden");
@@ -392,31 +402,43 @@ public class PatientenverwaltungGUI extends Application {
            else{
                try {
                    int id = Integer.parseInt(suchenFied.getText());
-                   List<Patient> erg = control.suchPatientmitIDServer(suchenFied.getText());
-                   if (erg != null) {
-                       if (erg.get(0) == null) {
-                           throw new NichtErlaubException();
+                   try {
+                       List<Patient> erg = control.suchPatientmitIDServer(suchenFied.getText());
+                       if (erg != null) {
+                           if (erg.get(0) == null) {
+                               throw new NichtErlaubException();
+                           }
+                           control.setPatTabelview(erg);
+                           grid = getGrid(null);
+                           vboxPd.getChildren().setAll(labelpd, grid);
+                           rechtBp.setCenter(vboxPd);
+                           boolean b = control.setMedtabelviewServer(tvMedikamente, erg.get(0));
+                           if(!b){
+                               tvMedikamente.setPlaceholder(new Label("Patient mit ID: "+ suchenFied.getText() +" hat keine Medikamente"));
+                           }
+                       } else {
+                           Formatter formatter = new Formatter();
+                           formatter.format("ID " + id + " nicht gefunden");
+
+                           JOptionPane.showMessageDialog(null, formatter.toString());
+                           formatter.close();
                        }
-                       control.setPatTabelview(erg);
-                       grid = getGrid(null);
-                       vboxPd.getChildren().setAll(labelpd, grid);
-                       rechtBp.setCenter(vboxPd);
-                       control.setMedtabelviewServer(tvMedikamente, erg.get(0));
-                   } else {
+                   }catch (RuntimeException w){
                        Formatter formatter = new Formatter();
-                       formatter.format("ID " + id + " nicht gefunden");
+                       formatter.format("ID " + suchenFied + " nicht gefunden");
 
                        JOptionPane.showMessageDialog(null, formatter.toString());
                        formatter.close();
                    }
 
-               }catch (JSONException a){  // Fall Formatieren eine Exeption wirf soll der Patetien nach der Name gesucht
+               }catch (JSONException  a){  // Fall Formatieren eine Exeption wirf soll der Patetien nach der Name gesucht
                    Formatter formatter = new Formatter();
                    formatter.format("ID " + suchenFied + " nicht gefunden");
 
                    JOptionPane.showMessageDialog(null, formatter.toString());
                    formatter.close();
-               } catch (NumberFormatException ee) {
+               }
+               catch (NumberFormatException ee) {
                    try {
                        List erg = control.suchmitNameServer(suchenFied.getText());
                        if (!erg.isEmpty()) {
@@ -434,7 +456,6 @@ public class PatientenverwaltungGUI extends Application {
                            formatter.close();
                        }
                    }catch (JSONException eee){
-                       eee.printStackTrace();
                        Formatter formatter = new Formatter();
                        formatter.format("Der Name " + suchenFied.getText() + " ist nicht gefunden");
 

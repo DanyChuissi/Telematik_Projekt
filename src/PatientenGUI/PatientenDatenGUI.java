@@ -137,7 +137,7 @@ public class PatientenDatenGUI extends Stage {
                 if (!tfname.getText().isEmpty() && !tfvor.getText().isEmpty()) {
                     try {
                         int plz = Integer.parseInt(tfpostalc.getText());
-
+                        boolean speicherungOK = true;
                         patient.setName(tfname.getText());
                         patient.setVorname(tfvor.getText());
                         patient.setGeburtsdatum(patient.stringToSqlDate(tfgebD.getValue().toString()));
@@ -152,11 +152,20 @@ public class PatientenDatenGUI extends Stage {
                         if (patient.getIdentifier() != 0) {
                             control.updatePatient(patient);
                         } else {
-                            control.addPatientDB(patient);
-                            int anzahlMediS =AddPAtientVomServerInDB(primaryStage,control,patient);
+                            speicherungOK =AddPAtientVomServerInDB(primaryStage,control,patient);
                         }
-                        control.setPatTableview();
-                        close();
+                        if(!speicherungOK){
+                            Formatter formatter = new Formatter();
+                            formatter.format("Patient schon Vorhanden");
+
+                            JOptionPane.showMessageDialog(null, formatter.toString());
+                            formatter.close();
+                            close();
+                        }
+                        else {
+                            control.setPatTableview();
+                            close();
+                        }
                     } catch (ParseException exx) {
                         Formatter formatter = new Formatter();
                         formatter.format("Bitte gültiges Datum-Format eingeben :yyyy-MM-dd");
@@ -284,34 +293,51 @@ public class PatientenDatenGUI extends Stage {
     }
 
     /* Die Methode fügt alle Medikationstatememt der Patient im Server*/
-    public static int AddPAtientVomServerInDB(Stage primaryStage, Controller control, Patient patient) throws SQLException {
-        int anzahl = 0;
+    public static boolean AddPAtientVomServerInDB(Stage primaryStage, Controller control, Patient patient) throws SQLException {
         List<MedicationStatement> medSList = control.getMedSteServer(patient);
         List<Medikament> medicaments = control.getMedikamentList();
-        if (medSList != null && medSList.size() > 0) {
-            for (int i = 0; i < medSList.size(); i++) {
+        //Medikament med2 = null;
+        boolean b = control.addPatientDB(patient);
+        if(b) {
+            Patient neuPatient = null;
+            try {
+                neuPatient = control.getLastInsertedDB();
+            } catch (NichtErlaubException e) {
+                e.printStackTrace();
+            }
+            if (medSList != null && medSList.size() > 0) {
+                for (int i = 0; i < medSList.size(); i++) {
 
-                Medikament med = null;
+                    Medikament med = null;
 
-                for (int j = 0; i < medicaments.size(); i++) {
-                    if (medSList.get(i).getCode() == medicaments.get(j).getCode()) {
-                        med = medicaments.get(i);
-                        break;
+                    for (int j = 0; j < medicaments.size(); j++) {
+                        if (medSList.get(i).getCode() != null && medSList.get(i).getCode().equals(medicaments.get(j).getCode())) {
+                            med = medicaments.get(j);
+                            j = medicaments.size();
+                        }
+                    }
+                    if (med == null) {
+                        med = new Medikament();
+                        med.setCode(medSList.get(i).getCode());
+                        med.setName(medSList.get(i).getName());
+                        if(med.getCode() != null && med.getName() != null){
+                            control.addMedicamentDB(med);
+                            try {
+                                med = control.getLastMedInserted();
+                                 //System.out.println(med2.getName());
+                                // System.out.println(med2.getCode());
+                            } catch (NichtErlaubException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    if ( med != null && med.getCode() != null && med.getName() != null && neuPatient != null) {
+                        control.addMedikamenteDB(neuPatient, med, medSList.get(i).getTaken(), medSList.get(i).getStatusStmt(), "", "", medSList.get(i).getDosage());
                     }
                 }
-                if (med == null) {
-                    med = new Medikament();
-                    med.setCode(medSList.get(i).getCode());
-                    med.setName(medSList.get(i).getName());
-                    control.addMedicamentDB(med);
-                }
-                control.addMedikamenteDB(patient, med, medSList.get(i).getTaken(), medSList.get(i).getStatusStmt(), "", "", medSList.get(i).getDosage());
-           anzahl++;
             }
-
-
         }
 
-        return  anzahl;
+        return  b;
     }
 }

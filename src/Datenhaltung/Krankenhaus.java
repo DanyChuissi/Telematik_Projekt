@@ -88,12 +88,8 @@ public class Krankenhaus {
   System.out.println("krnakenhaus. Methise Zeile 74");
         } catch (SQLException e) {
             if(e.getMessage().contains("Insert not allowed")) {
-                System.out.println(false);
-                e.printStackTrace();
-                return b;
+                b = false;
             }
-            e.printStackTrace();
-            b = false;
         }
 
         return b;
@@ -163,6 +159,35 @@ public class Krankenhaus {
         return patient;
     }
 
+    public Medikament getLastInsertedMed() throws SQLException, NichtErlaubException {
+        conn.setAutoCommit(false);
+        Medikament med = new Medikament();
+        String insert = "SELECT * FROM medicament";
+        Statement ps = null;
+
+        try {
+            ps = conn.createStatement();
+            conn.commit();
+            ResultSet rs = ps.executeQuery(insert);
+            rs.afterLast();
+            GETLASTINSERTED:
+            while (rs.previous()) {
+                med = new Medikament();
+                med.setMedID(rs.getInt(1));
+                med.setName(rs.getString(2));
+                med.setCode(rs.getString(3));
+                med.setOverCounter(rs.getBoolean(4));
+                med.setForm(rs.getString(5));
+                med.setManufacturer(rs.getString(6));
+                med.setStatusMed(rs.getString(7));
+                med.setIdServer(rs.getString(8));
+                break GETLASTINSERTED;//to read only the last row
+            }
+        }catch (SQLException e){
+
+        }
+        return med;
+    }
     public void addMedikamentStatement(Patient p, Medikament m, String taken, String status , String period, String note, String dosage) throws SQLException {
         conn.setAutoCommit(false);
         String select = "INSERT INTO medicamentstatement(PID,MeID,taken,note,status,periode,dosage)VALUES(?,?,?,?,?,?,?)";

@@ -8,6 +8,7 @@ import src.Datenhaltung.Krankenhaus;
 import src.Datenhaltung.KrankenhausMvenrepository;
 import src.Fachlogik.*;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class Controller {
         this.kr = new Krankenhaus();
     }
 
-    public List<Patient> suchPatientmitIDServer(String Id) throws JSONException{
+    public List<Patient> suchPatientmitIDServer(String Id) throws JSONException, RuntimeException {
         List<Patient> erg = new ArrayList<>();
         erg.add(krServ.getPatientbyId(Id));
         return  erg;
@@ -75,15 +76,17 @@ public class Controller {
 
 
 
-    public void setMedtabelviewServer(TableView<MedicationStatement> tv, Patient p) {
+    public boolean setMedtabelviewServer(TableView<MedicationStatement> tv, Patient p) {
+        tvMed = tv;
         tvMed.getItems().clear();
         List<MedicationStatement>  med = krServ.getMedikamentStatementbyPatient(p.getIdServer());
-
+        boolean b = false;
         //Patient p = me.getPatient();
         if(med!= null && med.size() > 0) {
-            System.out.println("trst comtroller zeile 84");
             tvMed.getItems().addAll(med);
+            return true;
         }
+        return false;
     }
 
 
@@ -111,6 +114,9 @@ public class Controller {
     public MedicationStatement updateMedDaten(MedicationStatement med) throws SQLException {
         return  kr.updateMeDaten(med);
     }
+    public Patient getLastInsertedDB() throws SQLException, NichtErlaubException {
+        return kr.getLastInserted();
+    }
     public boolean addPatientDB(Patient neu) throws SQLException {
         boolean b =  kr.addPatientDB(neu);
         System.out.println("Addpatient Controller zeilr 78");
@@ -136,7 +142,10 @@ public class Controller {
         kr.addMedikamentStatement(p, med,taken,status, period, note, dosage);
         //obsListMed.add(p.getMedicament());
         //setMedTableview(tv , p);
+    }
 
+    public Medikament getLastMedInserted() throws SQLException, NichtErlaubException {
+        return kr.getLastInsertedMed();
     }
     public void setMedTableview( TableView tv, Patient p){
         // tvMed = tv;
@@ -167,18 +176,25 @@ public class Controller {
             e.printStackTrace();
         }
     }
-    public void setMedtabelviewBD(TableView<MedicationStatement> tv, Patient p) {
+    public boolean setMedtabelviewBD(TableView<MedicationStatement> tv, Patient p) {
+        boolean b = false;
         tvMed = tv;
         tvMed.getItems().clear();
+        List<MedicationStatement> list = null;
         if (p != null)
             try {
+                list = kr.getMediListPa(p);
+                if(list != null && list.size() > 0){
+                    tvMed.getItems().addAll(kr.getMediListPa(p));
+                    return true;
+                }
 
-                tvMed.getItems().addAll(kr.getMediListPa(p));
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (NichtErlaubException e) {
                 e.printStackTrace();
             }
+            return false;
     }
 
     public void setPatTableview(){

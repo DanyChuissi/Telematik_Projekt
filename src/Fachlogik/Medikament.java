@@ -13,6 +13,11 @@ public class Medikament {
     public Medikament(){
     }
 
+    @Override
+    public String toString(){
+        return this.getName();
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -37,10 +42,6 @@ public class Medikament {
         return MedID;
     }
 
-    //  @Override
-    // public String toString(){
-    // return this.code;
-    //  }
     public boolean isOverTheCounter() {
         return isOverTheCounter;
     }

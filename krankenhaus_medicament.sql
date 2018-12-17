@@ -30,7 +30,7 @@ CREATE TABLE `medicament` (
   `form` varchar(255) DEFAULT NULL,
   `manufacturer` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
-  `idServer` int(11) DEFAULT NULL,
+  `idServer` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`MeID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

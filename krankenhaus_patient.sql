@@ -38,7 +38,7 @@ CREATE TABLE `patient` (
   `aufnahmeDatum` date DEFAULT NULL,
   `entlassungsDatum` date DEFAULT NULL,
   `entlassungStatus` tinyint(1) DEFAULT NULL,
-  `idServer` int(11) DEFAULT NULL,
+  `idServer` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`identifier`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -22,6 +22,11 @@ package src.Datenhaltung;
 
 public class KrankenhausMvenrepository {
 
+
+    /**
+     * Main Methode nur für (test).
+     * @param args
+     */
     public static void main(String[] args) {
 
         KrankenhausMvenrepository krSer = new KrankenhausMvenrepository();
@@ -30,42 +35,9 @@ public class KrankenhausMvenrepository {
         //krSer.testMedStat("286595");
        // krSer.testPatientList("Chalmers");
         //krSer.testMedikamente();
+        //AddMedDB();
 
 
-        // String jsonStringbyId = callURLbyname("http://hapi.fhir.org/baseDstu3/Medication?_format=json");
-
-
-        //löschen le } a la fin du String a utilisé seulekemnt avec le Call by NAme
-      //  String jsonStringbyName;
-        //  jsonStringbyName = jsonStringbyId.substring( 0, jsonStringbyId.length() - 1 );
-        //System.out.println("\n\njsonString: " + jsonString1);
-
-// Replace this try catch block for all below subsequent examples
-       /*try {
-            JSONObject jo = new JSONObject("["+jsonString+"]");
-            JSONArray jsonArray = new JSONArray(jo);
-            System.out.println("\n\njsonArray: " + jsonArray);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-
-      /* try {
-            JSONArray jsonArray = new JSONArray(jsonStringbyName);
-
-            JSONObject jsonObj= new JSONObject();  // these 4 files add jsonObject to jsonArray
-
-            int count = jsonArray.length(); // get totalCount of all jsonObjects
-            for(int i=0 ; i< count; i++){   // iterate through jsonArray
-                JSONObject jsonObject = jsonArray.getJSONObject(i);  // get jsonObject @ i position
-                System.out.println("jsonObject " + i + ": " + jsonObject);
-               // JSONArray jsonarr = jsonObject.getJSONArray("name");
-              //  System.out.println(jsonObject.getString("id"));
-               // System.out.println(jsonarr.getJSONObject(0).getString("family"));
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
     }
     public static void AddMedDB(){
         KrankenhausMvenrepository krSer = new KrankenhausMvenrepository();
@@ -89,6 +61,10 @@ public class KrankenhausMvenrepository {
         }
     }
 
+    /**
+     * Test Methode für die Methode getPatientbyId
+     * @param Id
+     */
     public  void testPatient(String Id){
         Patient patient = getPatientbyId(Id);
 
@@ -110,6 +86,10 @@ public class KrankenhausMvenrepository {
 
     }
 
+    /**
+     * Test Methode für die Methode getPatientbyName
+     * @param name
+     */
     public  void testPatientList(String name){
         List<Patient> patient = getPatientbyName(name);
         for(int i = 0; i<patient.size();i++) {
@@ -133,6 +113,11 @@ public class KrankenhausMvenrepository {
 
 
     }
+
+    /**
+     * Test Methode für die Methode getMedicationStatementbypatient
+     * @param Id
+     */
     public void testMedStat(String Id){
         List<MedicationStatement> med = getMedikamentStatementbyPatient(Id);
 
@@ -152,6 +137,9 @@ public class KrankenhausMvenrepository {
         }
     }
 
+    /**
+     * test für die Methode getMedikament
+     */
     public void testMedikamente(){
         List<Medikament> med = getMedikamentPatient();
         if(med!= null) {
@@ -167,7 +155,13 @@ public class KrankenhausMvenrepository {
         }
     }
 
-    //Die Methode sucht die Patienten im Server nach Nane
+    /**
+     *  Die Methode nimmt einen Name als String und sucht im Server nach alle Patiente mit deisem Name.
+     *  Gitb ene Liste mit Patient zurüch falls Patiente gefunden sind. sonst null
+     * @param name
+     * @return List<Patient>
+     * @throws JSONException
+     */
     public List<Patient> getPatientbyName(String name)throws JSONException{
         name = loescheLeerzeichen(name);
         List<Patient> erg = new ArrayList<>();
@@ -184,6 +178,9 @@ public class KrankenhausMvenrepository {
                 if(jo.has("resource")) {
                     if (jo.getJSONObject("resource").has("id")) {
                             p.setIdServer(jo.getJSONObject("resource").getString("id"));
+                    }
+                    else{
+                        return null;
                     }
 
                     if (jo.getJSONObject("resource").has("active")) {
@@ -248,8 +245,16 @@ public class KrankenhausMvenrepository {
         return erg;
     }
 
-    // Die Methodee sucht die PAtienten im Server nach ID
-    public Patient getPatientbyId(String Id) throws JSONException{
+    /**
+     * Die Methode nimmt ein ID als String unf sucht im Server nach dem Patient mit diesem ID.
+     * git den Patient zurück falls der Patient gefunden wird. sont null
+     * @param Id
+     * @return Patient
+     * @throws JSONException
+     * @throws RuntimeException
+     */
+    public Patient getPatientbyId(String Id) throws JSONException , RuntimeException{
+        loescheLeerzeichen(Id);
         Patient p = new Patient();
         String url = "http://fhirtest.uhn.ca/baseDstu3/Patient/"+Id+"?_format=json";
         String jsonString = callURLbyId(url);
@@ -269,7 +274,6 @@ public class KrankenhausMvenrepository {
                 p.setVorname(vornameArray.toString());
                 String vorn = "";
                 for(int i=0; i<vornameArray.length();i++){
-                System.out.println("test: "+ vornameArray.get(0).toString());
                     String vorname = vornameArray.get(i).toString();
                    vorn = vorn + " "+ vorname;
                 }// vorname
@@ -293,7 +297,6 @@ public class KrankenhausMvenrepository {
             }
             if(jo.has("address")) {
                 JSONArray adressearray = jo.getJSONArray("address");
-                System.out.println("addresse: "+adressearray);
                 if(adressearray.getJSONObject(0).has("line")) {
                     JSONArray streetarray = adressearray.getJSONObject(0).getJSONArray(("line"));
                     p.setStreet(streetarray.get(0).toString());// Streeet
@@ -314,8 +317,14 @@ public class KrankenhausMvenrepository {
         return p;
     }
 
-    // Die Methode sucht die MedicamentStetement von einem Patienten
+    /**
+     *  Die Methode die die ID einem Patient als String und sucht im Server nach alle MedicamentStatemt für diesem Patient
+     *  gitb Die liste der MedikamentStatemtn zurück sonst null falls keine gefunden wird
+     * @param Id
+     * @return List<MedicationStatement>
+     */
     public List<MedicationStatement> getMedikamentStatementbyPatient(String Id){
+        loescheLeerzeichen(Id);
         List<MedicationStatement> erg = new ArrayList<>();
         String url = "http://fhirtest.uhn.ca/baseDstu3/MedicationStatement?patient=" +Id+"&_format=json";
         String jsonString = callURLbyname(url);
@@ -387,10 +396,13 @@ public class KrankenhausMvenrepository {
     }
 
 
-
-    //Die Methode sucht die Medikament nach name
+    /**
+     * Die Methode Gibt die Liste von Medikamnt die im Server gefunden werden.
+     * @return
+     */
     public List<Medikament> getMedikamentPatient(){
         List<Medikament> erge = new ArrayList<>();
+        boolean doppel=false;
         String url = "http://fhirtest.uhn.ca/baseDstu3/Medication?_format=json";
         //String url = "http://fhirtest.uhn.ca/baseDstu3/Medication/?_formatl=json";
         String jsonString = callURLbyname(url);
@@ -407,13 +419,13 @@ public class KrankenhausMvenrepository {
                 //  JSONObject jsonObject = new JSONObject();
                 Medikament medi = new Medikament();
                 JSONObject jsonobj_1 = (JSONObject)jsonArray.get(i);
-
                 if (jsonobj_1.has("resource")) {
                     if (jsonobj_1.getJSONObject("resource").has("code") && jsonobj_1.getJSONObject("resource").getJSONObject("code").has("coding")) {
                         //System.out.println(jsonobj_1.getJSONObject("resource").getJSONObject("code").has("coding"));
                         JSONArray codearray = jsonobj_1.getJSONObject("resource").getJSONObject("code").getJSONArray("coding");
                         if (codearray.getJSONObject(0).has("code")) {
                             medi.setCode(codearray.getJSONObject(0).getString("code"));
+                            doppel = pruefedoppel(erge, medi.getCode());
                         }
                     }
 
@@ -436,7 +448,10 @@ public class KrankenhausMvenrepository {
                     }
 
                 }
-                erge.add(medi);
+                if (!doppel) {
+                    erge.add(medi);
+                }
+
 
 
             }
@@ -448,8 +463,12 @@ public class KrankenhausMvenrepository {
     }
 
 
-
-    // Die Methode soll bei suchen im Server wo eine Liste zurückgegeben werden soll
+    /**
+     * Die methode nimmt die Url gibt ein JSon als String zurüch
+     * wird benutzt nur für ergebnisse die mehr als einen Ojekt enthalten
+     * @param myURL
+     * @return
+     */
     public static String callURLbyname(String myURL) {
         System.out.println("Requested URL:" + myURL);
         StringBuilder sb = new StringBuilder();
@@ -486,7 +505,12 @@ public class KrankenhausMvenrepository {
         return sb.toString();
     }
 
-    // Die Methode soll bei der Suche im Server wo nur ein Element zurück gegeben werden soll
+    /**
+     * Die methode nimmt die Url gibt ein JSon als String zurüch
+     * wird benutzt nur für ergebnisse die ein Objekt enthalten
+     * @param myURL
+     * @return
+     */
     public static String callURLbyId(String myURL) {
         System.out.println("Requested URL:" + myURL);
         StringBuilder sb = new StringBuilder();
@@ -525,5 +549,15 @@ public class KrankenhausMvenrepository {
             }
         }
         return erg;
+    }
+
+    public static boolean pruefedoppel(List<Medikament> list ,String code){
+        boolean b = false;
+        for(int i = 0; i < list.size(); i++){
+            if(code.equals(list.get(i).getCode())){
+                return true;
+            }
+        }
+        return false;
     }
 }

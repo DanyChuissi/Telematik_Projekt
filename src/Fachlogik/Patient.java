@@ -1,7 +1,5 @@
 package src.Fachlogik;
 
-
-        import src.PatientenGUI.NichtErlaubException;
         import java.text.ParseException;
         import java.util.Date;
         import java.text.SimpleDateFormat;
@@ -65,6 +63,12 @@ public class Patient {
         this.medicament = medicament;
     }
 
+    /**
+     * Die Methode nimmt ein String und wandelt diese in ein Date von Type java.sql.date
+     * @param st
+     * @return java.sql.Date
+     * @throws ParseException
+     */
     public java.sql.Date stringToSqlDate(String st) throws ParseException {
         Date parsed = DATE_FORMAT.parse(st);
         java.sql.Date sql = new java.sql.Date(parsed.getTime());
@@ -78,6 +82,9 @@ public class Patient {
         return this.gender;
     }
 
+    public String getVollName(){
+        return this.vorname +" "+ this.getName();
+    }
     /*public void addmedicament(Medikament med, String taken, String status) {
         MedicationStatement neu = new MedicationStatement(this, med, taken, status);
         medicament.add(neu);

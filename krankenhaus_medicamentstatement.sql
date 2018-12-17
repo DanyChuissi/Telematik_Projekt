@@ -31,7 +31,7 @@ CREATE TABLE `medicamentstatement` (
   `status` varchar(255) DEFAULT NULL,
   `periode` varchar(255) DEFAULT NULL,
   `dosage` varchar(255) DEFAULT NULL,
-  `idServer` int(11) DEFAULT NULL,
+  `idServer` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`statID`),
   KEY `medicamentstatement_ibfk_1` (`PID`),
   KEY `medicamentstatement_ibfk_2` (`MeID`),
