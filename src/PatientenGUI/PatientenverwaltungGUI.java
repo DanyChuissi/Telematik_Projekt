@@ -55,7 +55,7 @@ public class PatientenverwaltungGUI extends Application {
         Button suchen = new Button("Suchen");
         Button listPatient = new Button ("Patienten List");
         TextField suchenFied = new TextField();
-        CheckBox Localsuche = new CheckBox("Nur Local Suche");
+        CheckBox Localsuche = new CheckBox("Locale Suche");
 
         //HauptBorderpane
         BorderPane hauptBp = new BorderPane();

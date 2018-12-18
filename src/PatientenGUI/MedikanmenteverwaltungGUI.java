@@ -148,16 +148,17 @@ public class MedikanmenteverwaltungGUI extends Stage {
                 // Die angegebene Änderungen werden gespeichert
                 save.setOnAction(e -> {
                     Medikament med = new Medikament();
-                    if(!codeComboBox.getSelectionModel().isEmpty() ) {
-                    for(int i = 0; i< tmp.size(); i++){
+                    if(codeComboBox.getValue() != null ) {
+                    /*for(int i = 0; i< tmp.size(); i++){
                         if(codeComboBox.getValue().equals(tmp.get(i).getCode())){
                             med = tmp.get(i);
                         }
-                    }
+                    }*/
                   /*  if(patient.getIdentifier() == 0 && med == null){
                         med.setName(medS.getName());
 
                     }*/
+                   med = codeComboBox.getValue();
                     if(patient != null && med != null  && !takenComboBox.getSelectionModel().isEmpty() && !statusComboBox.getSelectionModel().isEmpty()) {
 
 
@@ -172,14 +173,14 @@ public class MedikanmenteverwaltungGUI extends Stage {
                         medS.setStatusStmt(statusComboBox.getValue());
                         medS.setMedikament(med);
                         medS.setTaken(takenComboBox.getValue());
-                        control.setMedtabelviewBD(tv, medS);
+                        //control.setMedtabelviewBD(tv, medS);
 
-                        /*try {
+                        try {
                              MedicationStatement me = control.updateMedDaten(medS);
-                             control.setMedTableview(tv, patient);
+                             control.setMedtabelviewBD(tv, patient);
                         } catch (SQLException e1) {
                             e1.printStackTrace();
-                        }*/
+                        }
 
 
                         close();
@@ -190,9 +191,9 @@ public class MedikanmenteverwaltungGUI extends Stage {
                         JOptionPane.showMessageDialog(null, formatter.toString());
                         formatter.close();
                     }
-                    }else{
+                   }else{
                         Formatter formatter = new Formatter();
-                        formatter.format("Name oder Vorname ist Leer");
+                        formatter.format("Medikament Code ist Leer");
 
                         JOptionPane.showMessageDialog(null, formatter.toString());
                         formatter.close();

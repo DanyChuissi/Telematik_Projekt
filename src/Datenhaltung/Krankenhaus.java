@@ -49,19 +49,11 @@ public class Krankenhaus {
     }
     public boolean addPatientDB(Patient p) throws SQLException {
         conn.setAutoCommit(false);
-       /* if(p.getAufnahmeDatum() == null) {
-            try {
-                p.setGeburtsdatum(p.stringToSqlDate(inverseDate(p.getGeburtsdatumS())));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }*/
+
         String insert = "INSERT INTO patient(name, vorname,gender,telefon,birthdate, deseased,Street, location, postalcode,aufnahmeDatum ,entlassungStatus, idServer) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
         boolean b = false;
         try {
-          /*  String str="2015-03-31";
-            Date date=Date.valueOf(str);*/
             ps = conn.prepareStatement(insert);
 
             /*Wird vervendet fall Patient vom Server un aufnahme Datum = null*/
@@ -85,7 +77,6 @@ public class Krankenhaus {
             ps.execute();
             conn.commit();
             b = true;
-  System.out.println("krnakenhaus. Methise Zeile 74");
         } catch (SQLException e) {
             if(e.getMessage().contains("Insert not allowed")) {
                 b = false;
@@ -348,7 +339,7 @@ public class Krankenhaus {
         return medicament;
     }
 
-        public List<Patient> suchtPaI(int id) throws SQLException, NichtErlaubException {
+    public List<Patient> suchtPaI(int id) throws SQLException, NichtErlaubException {
         conn.setAutoCommit(false);
         String insert = "SELECT * FROM patient WHERE identifier =" + id;
 
@@ -495,6 +486,7 @@ public class Krankenhaus {
                 medicationStatement.setName(med.getName());
                 medicationStatement.setManufacturer(med.getManufacturer());
                 medicationStatement.setPrescription(med.isOverTheCounter());
+                medicationStatement.setCode(med.getCode());
                 //medicationStatement.setIdServer(med.getIdServer());
 
                 medi.add(medicationStatement);
@@ -560,21 +552,6 @@ public class Krankenhaus {
             ps.setDate(12, (Date) patient.getEntlassungsdatum());
             ps.setBoolean(13, patient.getEntlassungStatus());
             ps.setString(14,patient.getIdServer());
-
-           System.out.println(patient.getName());
-            System.out.println( patient.getVorname());
-            System.out.println( patient.getGender());
-            System.out.println( patient.getActive());
-            System.out.println(patient.getTelefon());
-            System.out.println((Date) patient.getGeburtsdatum());
-            System.out.println(patient.getDeseased());
-            System.out.println( patient.getStreet());
-            System.out.println( patient.getLocation());
-            System.out.println( patient.getPostalcode());
-            System.out.println( (Date) patient.getAufnahmeDatum());
-            System.out.println( (Date) patient.getEntlassungsdatum());
-            System.out.println( patient.getEntlassungStatus());
-            System.out.println(patient.getIdServer());
 
             ps.executeUpdate();
             conn.commit();
