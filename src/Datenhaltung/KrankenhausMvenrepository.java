@@ -10,8 +10,6 @@ package src.Datenhaltung;
         import java.util.ArrayList;
         import java.util.List;
 
-
-        import org.hl7.fhir.dstu3.model.Medication;
         import org.json.JSONArray;
         import org.json.JSONException;
         import org.json.JSONObject;
@@ -30,8 +28,12 @@ public class KrankenhausMvenrepository {
     public static void main(String[] args) {
 
         KrankenhausMvenrepository krSer = new KrankenhausMvenrepository();
+        //JSONObject jsonObj = getJson();
+       // System.out.println(jsonObj);
 
-       // krSer.testPatient(139303);
+
+
+          krSer.testPatient("129272");
         //krSer.testMedStat("286595");
        // krSer.testPatientList("Chalmers");
         //krSer.testMedikamente();
@@ -39,6 +41,116 @@ public class KrankenhausMvenrepository {
 
 
     }
+   /* public static JSONObject getJson(){
+        JSONObject jsonOj = new JSONObject(
+                "{\n" +
+                        "  \"resourceType\": \"Patient\",\n" +
+                        "  \"id\": \"129272\",\n" +
+                        "  \"active\": true,\n" +
+                        "  \"name\": [\n" +
+                        "    {\n" +
+                        "      \"use\": \"official\",\n" +
+                        "      \"family\": \"Meyer\",\n" +
+                        "      \"given\": [\n" +
+                        "        \"Maria\",\n" +
+                        "        \"Grazia\"\n" +
+                        "      ]\n" +
+                        "    }\n" +
+                        "  ],\n" +
+                        "  \"telecom\": [\n" +
+                        "    {\n" +
+                        "      \"use\": \"home\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"system\": \"phone\",\n" +
+                        "      \"value\": \"(04) 45454 3343\",\n" +
+                        "      \"use\": \"work\",\n" +
+                        "      \"rank\": 1\n" +
+                        "    },\n" +
+                        "  ],\n" +
+                        "  \"gender\": \"Female\",\n" +
+                        "  \"birthDate\": \"1980-08-13\",\n" +
+                        "  \"deceasedBoolean\": false,\n" +
+                        "  \"address\": [\n" +
+                        "    {\n" +
+                        "      \"use\": \"home\",\n" +
+                        "      \"type\": \"both\",\n" +
+                        "      \"text\": \"288 Carnia Milano, Lombardia, 35432\",\n" +
+                        "      \"line\": [\n" +
+                        "        \"534 Erewhon St\"\n" +
+                        "      ],\n" +
+                        "      \"city\": \"Milano\",\n" +
+                        "      \"state\": \"Lombardia\",\n" +
+                        "      \"postalCode\": \"35432\"\n" +
+                        "    }\n" +
+                        "  ],\n" +
+                        "  \"maritalStatus\": {\n" +
+                        "    \"coding\": [\n" +
+                        "      {\n" +
+                        "        \"code\": \"M\",\n" +
+                        "        \"display\": \"Married\"\n" +
+                        "      }\n" +
+                        "    ]\n" +
+                        "  }\n" +
+                        "}\""
+
+
+        "{"
+           +" \"active\": true,"
+             +"   \"name\": ["
+           +" {"
+            +"    \"use\": \"official\","
+                +"        \"family\": \"Paul\","
+                +"  \"given\": ["
+                +"  \"Meyer\""
+                +"          \"Jam\""
+                +"  ]"
+                +"      }"
+                +" ],"
+                +"   \"telecom\": ["
+                +"   {"
+                +"      \"use\": \"home\""
+                +"   },"
+                +"   {"
+                +"    \"system\": \"phone\","
+                +"        \"value\": \"(03) 6666 6473\","
+                +"       \"use\": \"work\","
+                +"      \"rank\": 1"
+                +"    },"
+                +"  ],"
+                +"   \"gender\": \"male\","
+                +"      \"birthDate\": \"2002-11-18\","
+                +" \"deceasedBoolean\": false,"
+                +" \"address\": ["
+                +"    {"
+                +"       \"use\": \"home\","
+                +"         \"type\": \"both\","
+                +"         \"text\": \"53 Erewhon St PeasantVille, Rainbow, Vic  3999\","
+                +"         \"line\": ["
+                +"     \"534 Erewhon St\""
+                +"  ],"
+                +"        \"city\": \"PleasantVille\","
+                +"          \"district\": \"Rainbow\","
+                +"         \"state\": \"Vic\","
+                +"        \"postalCode\": \"3999\""
+                +"  }"
+                +" ],"
+                +"       \"maritalStatus\": {"
+                +"        \"coding\": ["
+                +"      {"
+                +"         \"code\": \"M\","
+                +"             \"display\": \"Married\""
+                +"    }"
+                +"   ]"
+                +"    }"
+                +"   }"
+
+
+        );
+
+    System.out.println(jsonOj);
+        return jsonOj;
+    }*/
     public static void AddMedDB(){
         KrankenhausMvenrepository krSer = new KrankenhausMvenrepository();
         Krankenhaus kr = new Krankenhaus();
@@ -258,8 +370,9 @@ public class KrankenhausMvenrepository {
         Patient p = new Patient();
         String url = "http://fhirtest.uhn.ca/baseDstu3/Patient/"+Id+"?_format=json";
         String jsonString = callURLbyId(url);
+        System.out.println(jsonString);
 
-        //System.out.println("\n\njsonArray: " + jsonString);
+        System.out.println("\n\njsonArray: " + jsonString);
             JSONObject jo = new JSONObject(jsonString);
 
             p.setIdServer(jo.getString("id"));
