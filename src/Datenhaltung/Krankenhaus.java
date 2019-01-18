@@ -38,7 +38,7 @@ public class Krankenhaus {
         try {
 
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(url, "root", "dany");
+            conn = DriverManager.getConnection(url, "root", "");
         } catch (SQLException e) {
             System.out.println("*** SQLException:\n" + e);
             e.printStackTrace();

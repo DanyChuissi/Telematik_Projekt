@@ -287,7 +287,11 @@ public class KrankenhausMvenrepository {
             for (int i = 0; i < count; i++){
             JSONObject jo = jsonArray.getJSONObject((i));  // iterate through jsonArray
                 Patient p = new Patient();
+
                 if(jo.has("resource")) {
+                    if(jo.getJSONObject("resource").has("meta") && jo.getJSONObject("resource").getJSONObject("meta").has("versionId")){
+                        p.setVersionId(jo.getJSONObject("resource").getJSONObject("meta").getString("versionId"));
+                    }
                     if (jo.getJSONObject("resource").has("id")) {
                             p.setIdServer(jo.getJSONObject("resource").getString("id"));
                     }
@@ -377,6 +381,10 @@ public class KrankenhausMvenrepository {
 
             p.setIdServer(jo.getString("id"));
 
+            if(jo.has("meta") && jo.getJSONObject("meta").has("versionId")){
+                p.setVersionId(jo.getJSONObject("meta").getString("versionId"));
+            }
+
             if(jo.has("active")) {
                 p.setActive(jo.getBoolean("active")); // active
             }
@@ -454,6 +462,9 @@ public class KrankenhausMvenrepository {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);  // get jsonObject @ i position
                // System.out.println("jsonObject " + i + ": " + jsonObject);
                 if(jsonObject.has("resource")) {
+                    if(jsonObject.getJSONObject("resource").has("meta") && jsonObject.getJSONObject("resource").getJSONObject("meta").has("versionId")){
+                        med.setVersionID(jsonObject.getJSONObject("resource").getJSONObject("meta").getString("versionId"));
+                    }
                     if(jsonObject.getJSONObject("resource").has("taken")) {
                         med.setTaken(jsonObject.getJSONObject("resource").getString("taken"));   // taken
                     }

@@ -25,6 +25,7 @@ public class MedicationStatement {
     private String statusStmt; //active | completed | entered-in-error | intended | stopped | on-hold
     private DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
     private int patientId;
+    private String versionID;
 
     public int getPatientId() {
         return patientId;
@@ -41,6 +42,14 @@ public class MedicationStatement {
         this.statusStmt = status;
     }
     public MedicationStatement(){
+    }
+
+    public String getVersionID() {
+        return versionID;
+    }
+
+    public void setVersionID(String versionID) {
+        this.versionID = versionID;
     }
 
     public String getCode() {

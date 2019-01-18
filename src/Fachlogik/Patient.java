@@ -31,11 +31,19 @@ public class Patient {
     private  boolean enlassungStatus;
     private String gender;
 
+    private String VersionId;
+
     public Patient()
     {
         medicament = new LinkedList<MedicationStatement>();
     }
+    public String getVersionId() {
+        return VersionId;
+    }
 
+    public void setVersionId(String versionId) {
+        VersionId = versionId;
+    }
     public String getIdServer() {
         return idServer;
     }
