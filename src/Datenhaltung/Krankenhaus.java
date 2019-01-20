@@ -38,7 +38,7 @@ public class Krankenhaus {
         try {
 
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(url, "root", "");
+            conn = DriverManager.getConnection(url, "root", "dany");
         } catch (SQLException e) {
             System.out.println("*** SQLException:\n" + e);
             e.printStackTrace();
@@ -179,9 +179,9 @@ public class Krankenhaus {
         }
         return med;
     }
-    public void addMedikamentStatement(Patient p, Medikament m, String taken, String status , String period, String note, String dosage) throws SQLException {
+    public void addMedikamentStatement(Patient p, Medikament m, String taken, String status , String period, String note, String dosage, String idServer) throws SQLException {
         conn.setAutoCommit(false);
-        String select = "INSERT INTO medicamentstatement(PID,MeID,taken,note,status,periode,dosage)VALUES(?,?,?,?,?,?,?)";
+        String select = "INSERT INTO medicamentstatement(PID,MeID,taken,note,status,periode,dosage, idServer)VALUES(?,?,?,?,?,?,?,?)";
         PreparedStatement ps = null;
         try {
             ps = conn.prepareStatement(select);
@@ -193,7 +193,7 @@ public class Krankenhaus {
             ps.setString(5, status);
             ps.setString(6,period );
             ps.setString(7,dosage );
-            //ps.setString(8,idServer);
+            ps.setString(8,idServer);
 
             ps.executeUpdate();
             conn.commit();
@@ -536,6 +536,7 @@ public class Krankenhaus {
 
         try {
 
+            System.out.println("Krankenhaus ok: ");
             patient = p;
             ps = conn.prepareStatement(updatePa);
             ps.setString(1, patient.getName());
@@ -564,7 +565,7 @@ public class Krankenhaus {
     public MedicationStatement updateMeDaten(MedicationStatement me) throws SQLException {
         conn.setAutoCommit(false);
         int  id = me.getIdentifier();
-        String updateMe = "UPDATE medicamentstatement SET  MeID = ? , taken = ? , note = ? , status = ?, periode = ?, dosage = ? WHERE statID = " + id;
+        String updateMe = "UPDATE medicamentstatement SET  MeID = ? , taken = ? , note = ? , status = ?, periode = ?, dosage = ?, idServer = ? WHERE statID = " + id;
 
         PreparedStatement ps = null;
         try{
@@ -575,6 +576,7 @@ public class Krankenhaus {
             ps.setString(4, me.getStatusStmt());
             ps.setString(5,me.getPeriode() );
             ps.setString(6,me.getDosage() );
+            ps.setString(7,me.getIdServer() );
 
 
             ps.executeUpdate();

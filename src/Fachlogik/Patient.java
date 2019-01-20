@@ -41,6 +41,9 @@ public class Patient {
         return VersionId;
     }
 
+    public String getAdresseText(){
+        return this.getStreet()+", " + this.getPostalcode() + ", "+ this.getLocation();
+    }
     public void setVersionId(String versionId) {
         VersionId = versionId;
     }

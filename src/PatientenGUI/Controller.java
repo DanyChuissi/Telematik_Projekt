@@ -6,6 +6,7 @@ import javafx.scene.control.TableView;
 import org.json.JSONException;
 import src.Datenhaltung.Krankenhaus;
 import src.Datenhaltung.KrankenhausMvenrepository;
+import src.Datenhaltung.KrankenhausPostRequest;
 import src.Fachlogik.*;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class Controller {
     private Medikament[] medList;
     private Krankenhaus kr;
     private KrankenhausMvenrepository krServ;
+    private KrankenhausPostRequest krPost;
 
     public Controller(TableView tv){
         krServ = new KrankenhausMvenrepository();
@@ -35,6 +37,7 @@ public class Controller {
         tv.setItems(obsList);
         tvMed.setItems(obsListMed);
         this.kr = new Krankenhaus();
+        krPost = new KrankenhausPostRequest();
     }
 
     /**
@@ -49,6 +52,18 @@ public class Controller {
         List<Patient> erg = new ArrayList<>();
         erg.add(krServ.getPatientbyId(Id));
         return  erg;
+    }
+
+    public void patientPatch(Patient orig , Patient alt) throws Exception {
+         krPost.patchPatient(orig, alt);
+    }
+
+    public String patientPost(Patient patient) throws Exception {
+       return  krPost.postPatient(patient);
+    }
+
+    public String medikamentSPost(MedicationStatement medS, Patient patient) throws Exception {
+        return krPost.postMedStatement(medS, patient);
     }
 
     /**
@@ -222,8 +237,8 @@ public class Controller {
      * @throws SQLException
      */
 
-    public void addMedikamenteDB(Patient p, Medikament med, String taken, String status, String period, String note, String dosage) throws SQLException {
-        kr.addMedikamentStatement(p, med,taken,status, period, note, dosage);
+    public void addMedikamenteDB(Patient p, Medikament med, String taken, String status, String period, String note, String dosage, String idServer) throws SQLException {
+        kr.addMedikamentStatement(p, med,taken,status, period, note, dosage, idServer);
         //obsListMed.add(p.getMedicament());
         //setMedTableview(tv , p);
     }
@@ -249,6 +264,7 @@ public class Controller {
     }*/
 
     public void updatePatient(Patient patient) throws SQLException {
+        System.out.println("control : ok");
         kr.updatepaDaten(patient);
     }
 

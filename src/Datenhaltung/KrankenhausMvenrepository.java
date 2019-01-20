@@ -33,9 +33,9 @@ public class KrankenhausMvenrepository {
 
 
 
-          krSer.testPatient("129272");
+         // krSer.testPatient("129272");
         //krSer.testMedStat("286595");
-       // krSer.testPatientList("Chalmers");
+       krSer.testPatientList("eeee");
         //krSer.testMedikamente();
         //AddMedDB();
 
@@ -277,17 +277,18 @@ public class KrankenhausMvenrepository {
     public List<Patient> getPatientbyName(String name)throws JSONException{
         name = loescheLeerzeichen(name);
         List<Patient> erg = new ArrayList<>();
-        String url = "http://fhirtest.uhn.ca/baseDstu3/Patient?family="+name+"&_format=jsonn";
+        String url = "http://fhirtest.uhn.ca/baseDstu3/Patient?family="+name+"&_format=json";
         String jsonString = callURLbyname(url);
         String jsonStringbyName;
+        //System.out.println(jsonString);
         jsonStringbyName = jsonString.substring( 0, jsonString.length() - 1 );
             JSONArray jsonArray = new JSONArray(jsonStringbyName);
+
 
             int count = jsonArray.length(); // get totalCount of all jsonObjects
             for (int i = 0; i < count; i++){
             JSONObject jo = jsonArray.getJSONObject((i));  // iterate through jsonArray
                 Patient p = new Patient();
-
                 if(jo.has("resource")) {
                     if(jo.getJSONObject("resource").has("meta") && jo.getJSONObject("resource").getJSONObject("meta").has("versionId")){
                         p.setVersionId(jo.getJSONObject("resource").getJSONObject("meta").getString("versionId"));
@@ -310,8 +311,8 @@ public class KrankenhausMvenrepository {
                         if(nameArray.getJSONObject(0).has("given")) {
                             JSONArray vornameArray = nameArray.getJSONObject(0).getJSONArray("given");
                             String vorn = "";
-                            for(int j=0; i<vornameArray.length();i++){
-                                String vorname = vornameArray.get(i).toString();
+                            for(int j=0; j<vornameArray.length();j++){
+                                String vorname = vornameArray.get(j).toString();
                                 vorn = vorn + " "+ vorname;
                             }// vorname
                             p.setVorname(vorn);
@@ -451,7 +452,7 @@ public class KrankenhausMvenrepository {
         String jsonString = callURLbyname(url);
         String jsonStringbyName;
         jsonStringbyName = jsonString.substring( 0, jsonString.length() - 1 );
-        //System.out.println("\n\njsonArray: " + jsonStringbyName);
+        System.out.println("\n\njsonArray: " + jsonStringbyName);
 
         try {
             JSONArray jsonArray = new JSONArray(jsonStringbyName);

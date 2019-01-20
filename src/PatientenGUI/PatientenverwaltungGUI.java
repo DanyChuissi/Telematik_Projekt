@@ -456,12 +456,13 @@ public class PatientenverwaltungGUI extends Application {
                            //control.setMedtabelviewServer(tvMedikamente, (Patient));
                        } else {
                            Formatter formatter = new Formatter();
-                           formatter.format("111Der Name " + suchenFied.getText() + " ist nicht gefunden");
+                           formatter.format("Der Name " + suchenFied.getText() + " ist nicht gefunden");
 
                            JOptionPane.showMessageDialog(null, formatter.toString());
                            formatter.close();
                        }
                    }catch (JSONException eee){
+
                        Formatter formatter = new Formatter();
                        formatter.format("Der Name " + suchenFied.getText() + " ist nicht gefunden");
 

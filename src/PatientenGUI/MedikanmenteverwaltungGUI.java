@@ -75,6 +75,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
             TextField noteV = new TextField();
 
             Button save = new Button("Änderungen Speichern");
+            Button saveServer = new Button("Hochladen");
 
             Button abbrechen = new Button("Abbrechen");
             HBox hb = new HBox();
@@ -125,6 +126,19 @@ public class MedikanmenteverwaltungGUI extends Stage {
                 takenComboBox.setValue(medS.getTaken());
                 statusComboBox.setValue(medS.getStatusStmt());
                 noteV.setText(medS.getNote());
+
+                //Lokale Medikament
+                if(medS.getIdServer() == null && patient.getIdServer() != null){
+                    saveServer.setText("Medication Hochladen");
+                    grid.add(saveServer, 0, 10);
+                    saveServer.setOnAction(e -> {
+                        try {
+                            control.medikamentSPost(medS, patient);
+                        } catch (Exception es) {
+                            es.printStackTrace();
+                        }
+                    });
+                }
 
                 // Mit diese setOnAction kann ein Medikation Statement gelöscht werden
                 remove.setOnAction(e -> {
@@ -202,7 +216,6 @@ public class MedikanmenteverwaltungGUI extends Stage {
             }
             //Falls Medikament Stateemnt == null wird ein neue Medikament Statement erstellt
             else {
-
                 save.setOnAction(e -> {
                     Medikament med = new Medikament();
                      if(!codeComboBox.getSelectionModel().isEmpty()) {
@@ -216,7 +229,7 @@ public class MedikanmenteverwaltungGUI extends Stage {
                             MedicationStatement medS = new MedicationStatement();
                             medS.setPeriodevonbis(vonV.getValue().toString(), bisV.getValue().toString());
                             try {
-                                control.addMedikamenteDB(patient, med, takenComboBox.getValue(), statusComboBox.getValue(), medS.getPeriode(),noteV.getText(), dosageComboBox.getValue() );
+                                control.addMedikamenteDB(patient, med, takenComboBox.getValue(), statusComboBox.getValue(), medS.getPeriode(),noteV.getText(), dosageComboBox.getValue(), medS.getIdServer() );
                                 control.setMedtabelviewBD(tv, patient);
                             } catch (SQLException e1) {
                                 e1.printStackTrace();
@@ -238,6 +251,54 @@ public class MedikanmenteverwaltungGUI extends Stage {
                         formatter.close();
                     }
                 });
+                if(patient.getIdServer() != null) {
+                    saveServer.setText("Daten Hochladen");
+                    grid.add(saveServer, 0, 10);
+                    saveServer.setOnAction(e -> {
+                        Medikament med = new Medikament();
+                        if (!codeComboBox.getSelectionModel().isEmpty()) {
+
+                            med = codeComboBox.getValue();
+                            if (patient != null && med != null && !takenComboBox.getSelectionModel().isEmpty() && !statusComboBox.getSelectionModel().isEmpty()) {
+                                MedicationStatement medS = new MedicationStatement();
+
+                                medS.setPeriodevonbis(vonV.getValue().toString(), bisV.getValue().toString());
+                                medS.setStatusStmt(statusComboBox.getValue());
+                                medS.setName(codeComboBox.getValue().getName());
+                                medS.setTaken(takenComboBox.getValue());
+                                medS.setDosage(dosageComboBox.getValue());
+                                medS.setForm(med.getForm());
+                                medS.setCode(med.getCode());
+                                medS.setMedikament(med);
+
+                                    try {
+                                        String id = control.medikamentSPost(medS, patient);
+                                        medS.setIdServer(id);
+                                        control.updateMedDaten(medS);
+                                        close();
+                                    } catch (Exception es) {
+                                        es.printStackTrace();
+                                        close();
+                                    }
+
+
+                                close();
+                            } else {
+                                Formatter formatter = new Formatter();
+                                formatter.format("Medikament, taken und Status müssen eingegeben werden");
+
+                                JOptionPane.showMessageDialog(null, formatter.toString());
+                                formatter.close();
+                            }
+                        } else {
+                            Formatter formatter = new Formatter();
+                            formatter.format("kein Medikament gewählt");
+
+                            JOptionPane.showMessageDialog(null, formatter.toString());
+                            formatter.close();
+                        }
+                    });
+                }
 
             }
             abbrechen.setOnAction(e -> {
