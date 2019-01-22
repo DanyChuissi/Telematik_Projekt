@@ -116,6 +116,13 @@ public class PatientenDatenGUI extends Stage {
         // Die Methode wird aufgerufen wenn es auf "neuPAtient geclikt wird oder auf einen Patient in der Patienten List
         //Hier wird geprüft, ob es auf einen Patient geclickt worden ist
         if (patient != null) {
+            if(patient.getIdentifier() != 0){
+                // Patient lokal, wird nur Mofifiziert
+
+            }
+            else{
+                //Patient vom Server Kann neu gespeichert werden
+            }
             tfname.setText(patient.getName());
             tfvor.setText(patient.getVorname());
             if (patient.getGeburtsdatum() != null) {
@@ -133,8 +140,75 @@ public class PatientenDatenGUI extends Stage {
             } else {
                 nein.setSelected(true);
             }
-            if (patient.getIdServer() != null) { // Falls Patient vom Server ist
-                save = new Button("Patient im DB Speichern");
+            if (patient.getIdentifier() == 0) { // Falls Patient vom Server ist
+                if(patient.getIdentifier() == 0){
+                    save = new Button("Patient im DB Speichern");
+
+                    save.setOnAction(e -> {
+                        if (!tfname.getText().isEmpty() && !tfvor.getText().isEmpty()) {
+                            try {
+                                int plz = Integer.parseInt(tfpostalc.getText());
+                                boolean speicherungOK = true;
+                                patient.setName(tfname.getText());
+                                patient.setVorname(tfvor.getText());
+                                patient.setGeburtsdatum(patient.stringToSqlDate(tfgebD.getValue().toString()));
+                                patient.setGeburtsdatumS(tfgebD.getValue().toString());
+                                patient.setTelefon(tftel.getText());
+                                patient.setGender(genderComboBox.getValue());
+                                patient.setStreet(tfstreet.getText());
+                                patient.setPostalcode(plz);
+                                patient.setLocation(tflocation.getText());
+                                if (ja.isSelected())
+                                    patient.setDeseased(true);
+                                if (patient.getIdentifier() != 0) {
+                                    control.updatePatient(patient);
+                                } else {
+                                    speicherungOK =AddPAtientVomServerInDB(primaryStage,control,patient);
+                                }
+                                if(!speicherungOK){
+                                    Formatter formatter = new Formatter();
+                                    formatter.format("Patient schon Vorhanden");
+
+                                    JOptionPane.showMessageDialog(null, formatter.toString());
+                                    formatter.close();
+                                    close();
+                                }
+                                else {
+                                    control.setPatTableview();
+                                    close();
+                                }
+                            } catch (ParseException exx) {
+                                Formatter formatter = new Formatter();
+                                formatter.format("Bitte gültiges Datum-Format eingeben :yyyy-MM-dd");
+
+                                JOptionPane.showMessageDialog(null, formatter.toString());
+                                formatter.close();
+                            } catch (NumberFormatException ex) {
+                                Formatter formatter = new Formatter();
+                                formatter.format("Bitte gültiger Zahl eingeben");
+
+                                JOptionPane.showMessageDialog(null, formatter.toString());
+                                formatter.close();
+
+                            } catch (SQLException e1) {
+                                Formatter formatter = new Formatter();
+                                formatter.format("Fehler beim Updaten");
+
+                                JOptionPane.showMessageDialog(null, formatter.toString());
+                                formatter.close();
+                            }
+                        } else {
+                            Formatter formatter = new Formatter();
+                            formatter.format("Name oder Vorname ist Leer");
+
+                            JOptionPane.showMessageDialog(null, formatter.toString());
+                            formatter.close();
+                        }
+
+
+                    });
+                }
+
                 saveServer.setText("Update Daten");
                 hb.getChildren().setAll(save, abbrechen);
                 grid.add(saveServer, 0, 9);
@@ -145,7 +219,10 @@ public class PatientenDatenGUI extends Stage {
                     neu.setIdServer(patient.getIdServer());
                     neu.setVersionId(patient.getVersionId());
                     neu.setMedicament(patient.getMedicament());
-
+                    neu.setIdentifier(patient.getIdentifier());
+                    neu.setAufnahmeDatum(patient.getAufnahmeDatum());
+                    neu.setEntlassungsDatum(patient.getEntlassungsDatum());
+                    neu.setEnlassungStatus(patient.getEntlassungStatus());
 
                     int plz = Integer.parseInt(tfpostalc.getText());
                     boolean speicherungOK = true;
@@ -162,13 +239,27 @@ public class PatientenDatenGUI extends Stage {
                     neu.setStreet(tfstreet.getText());
                     neu.setPostalcode(plz);
                     neu.setLocation(tflocation.getText());
+                    //neu.setGeburtsdatum(patient.getGeburtsdatum());
+
                     if (ja.isSelected())
                         neu.setDeseased(true);
                     try {
-                        this.patientUpdaten( patient , neu);
-                        control.updatePatient(neu);
-                        control.setPatTableview();
-                        close();
+                        int  anzahlMed =  this.patientUpdaten( patient , neu);
+                            control.updatePatient(neu);
+                            control.setPatTableview();
+                            String text = "Patient wurde im Server modifiziert";
+                            if(anzahlMed > 0) {
+                                text = text + " " + "und " + anzahlMed + " Medication wurden hochgeladen";
+                            }
+                            if(anzahlMed > 0){
+                                Formatter formatter = new Formatter();
+                                formatter.format(text);
+
+                                JOptionPane.showMessageDialog(null, formatter.toString());
+                                formatter.close();
+                            }
+
+                            close();
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
@@ -178,14 +269,47 @@ public class PatientenDatenGUI extends Stage {
             else{ // falls Patient Lokal ist
                     saveServer.setText("Daten Hochladen");
                     grid.add(saveServer, 0, 9);
+
+                neu.setIdServer(patient.getIdServer());
+                neu.setVersionId(patient.getVersionId());
+                neu.setMedicament(patient.getMedicament());
+                neu.setIdentifier(patient.getIdentifier());
+
+
+                int plz = Integer.parseInt(tfpostalc.getText());
+                boolean speicherungOK = true;
+                neu.setName(tfname.getText());
+                neu.setVorname(tfvor.getText());
+                try {
+                    neu.setGeburtsdatum(neu.stringToSqlDate(tfgebD.getValue().toString()));
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+                neu.setGeburtsdatumS(tfgebD.getValue().toString());
+                neu.setTelefon(tftel.getText());
+                neu.setGender(genderComboBox.getValue());
+                neu.setStreet(tfstreet.getText());
+                neu.setPostalcode(plz);
+                neu.setLocation(tflocation.getText());
+                neu.setGeburtsdatum(patient.getGeburtsdatum());
+                neu.setAufnahmeDatum(patient.getAufnahmeDatum());
+                neu.setEntlassungsDatum(patient.getEntlassungsDatum());
+                neu.setEnlassungStatus(patient.getEntlassungStatus());
+                neu.setDeseased(patient.getDeseased());
+
+                if (ja.isSelected()) {
+                    neu.setDeseased(true);
+                }
+
                     // Patient Posten
                     saveServer.setOnAction(e -> {
                         try {
                             int anzahlmed = this.patientPosten(neu);
+                            control.setPatTableview();
                             close();
 
                             Formatter formatter = new Formatter();
-                            formatter.format("Patient " + neu.getVollName() + "mit " + anzahlmed + " Medikation im Server gespeichert");
+                            formatter.format("Patient " + neu.getVollName() + " mit " + anzahlmed + " Medikation im Server gespeichert");
 
                             JOptionPane.showMessageDialog(null, formatter.toString());
                             formatter.close();
@@ -196,75 +320,57 @@ public class PatientenDatenGUI extends Stage {
                         }
                     });
                     close();
-            }
+                   save.setOnAction(e -> {
+                       neu.setIdServer(patient.getIdServer());
+                       neu.setVersionId(patient.getVersionId());
+                       neu.setMedicament(patient.getMedicament());
+                       neu.setIdentifier(patient.getIdentifier());
 
-            save.setOnAction(e -> {
-                if (!tfname.getText().isEmpty() && !tfvor.getText().isEmpty()) {
-                    try {
-                        int plz = Integer.parseInt(tfpostalc.getText());
-                        boolean speicherungOK = true;
-                        patient.setName(tfname.getText());
-                        patient.setVorname(tfvor.getText());
-                        patient.setGeburtsdatum(patient.stringToSqlDate(tfgebD.getValue().toString()));
-                        patient.setGeburtsdatumS(tfgebD.getValue().toString());
-                        patient.setTelefon(tftel.getText());
-                        patient.setGender(genderComboBox.getValue());
-                        patient.setStreet(tfstreet.getText());
-                        patient.setPostalcode(plz);
-                        patient.setLocation(tflocation.getText());
-                        if (ja.isSelected())
-                            patient.setDeseased(true);
-                        if (patient.getIdentifier() != 0) {
-                            control.updatePatient(patient);
-                        } else {
-                            speicherungOK =AddPAtientVomServerInDB(primaryStage,control,patient);
-                        }
-                        if(!speicherungOK){
-                            Formatter formatter = new Formatter();
-                            formatter.format("Patient schon Vorhanden");
 
-                            JOptionPane.showMessageDialog(null, formatter.toString());
-                            formatter.close();
-                            close();
-                        }
-                        else {
+                       int plzz = Integer.parseInt(tfpostalc.getText());
+
+                       neu.setName(tfname.getText());
+                       neu.setVorname(tfvor.getText());
+                       try {
+                           neu.setGeburtsdatum(neu.stringToSqlDate(tfgebD.getValue().toString()));
+                       } catch (ParseException e1) {
+                           e1.printStackTrace();
+                       }
+                       neu.setGeburtsdatumS(tfgebD.getValue().toString());
+                       neu.setTelefon(tftel.getText());
+                       neu.setGender(genderComboBox.getValue());
+                       neu.setStreet(tfstreet.getText());
+                       neu.setPostalcode(plzz);
+                       neu.setLocation(tflocation.getText());
+                       neu.setGeburtsdatum(patient.getGeburtsdatum());
+                       neu.setAufnahmeDatum(patient.getAufnahmeDatum());
+                       neu.setEntlassungsDatum(patient.getEntlassungsDatum());
+                       neu.setEnlassungStatus(patient.getEntlassungStatus());
+                       neu.setDeseased(patient.getDeseased());
+
+                       if (ja.isSelected()) {
+                           neu.setDeseased(true);
+                       }
+
+
+                       try {
+                          control.updatePatient(neu);
                             control.setPatTableview();
-                            close();
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
                         }
-                    } catch (ParseException exx) {
-                        Formatter formatter = new Formatter();
-                        formatter.format("Bitte gültiges Datum-Format eingeben :yyyy-MM-dd");
-
-                        JOptionPane.showMessageDialog(null, formatter.toString());
-                        formatter.close();
-                    } catch (NumberFormatException ex) {
-                        Formatter formatter = new Formatter();
-                        formatter.format("Bitte gültiger Zahl eingeben");
-
-                        JOptionPane.showMessageDialog(null, formatter.toString());
-                        formatter.close();
-
-                    } catch (SQLException e1) {
-                        Formatter formatter = new Formatter();
-                        formatter.format("Fehler beim Updaten");
-
-                        JOptionPane.showMessageDialog(null, formatter.toString());
-                        formatter.close();
-                    }
-                } else {
-                    Formatter formatter = new Formatter();
-                    formatter.format("Name oder Vorname ist Leer");
-
-                    JOptionPane.showMessageDialog(null, formatter.toString());
-                    formatter.close();
+                        close();
+              });
                 }
 
 
-            });
+
+
 
         }
         // Falls der Patient == null wird ein neuen Patient erstellt
         else {
+            save.setText("Patient im DB Speichern");
             save.setOnAction(e -> {
                 patient = new Patient();
                 if (!tfname.getText().isEmpty() && !tfvor.getText().isEmpty()) {
@@ -425,18 +531,30 @@ public class PatientenDatenGUI extends Stage {
         patient.setIdServer(id);
         control.updatePatient(patient);
         List<MedicationStatement> med = control.getMedStat(patient);
-        System.out.println("anzahl Medikamente :  " +med.size());
         if(med.size() >0 ){
             for(int i = 0; i < med.size(); i++ ){
 
-                System.out.println(" PatientDaten 416:  "+i);
-                control.medikamentSPost(med.get(i), patient);
+                String medid = control.medikamentSPost(med.get(i), patient);
+                med.get(i).setIdServer(medid);
+                control.updateMedDaten(med.get(i));
             }
         }
         return med.size();
     }
 
-    public void patientUpdaten( Patient orig, Patient alt) throws Exception {
+    public int  patientUpdaten( Patient orig, Patient alt) throws Exception {
             control.patientPatch(orig, alt);
+            List<MedicationStatement> med = control.getMedStat(patient);
+            int count = 0;
+
+            for(int i = 0; i < med.size(); i++){
+                if(med.get(i).getIdServer() == null){
+                    String medid = control.medikamentSPost(med.get(i), patient);
+                    med.get(i).setIdServer(medid);
+                    control.updateMedDaten(med.get(i));
+                    count++;
+                }
+            }
+           return count;
     }
 }

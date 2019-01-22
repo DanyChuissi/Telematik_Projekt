@@ -133,11 +133,17 @@ public class MedikanmenteverwaltungGUI extends Stage {
                     grid.add(saveServer, 0, 10);
                     saveServer.setOnAction(e -> {
                         try {
-                            control.medikamentSPost(medS, patient);
+                             String idMed = control.medikamentSPost(medS, patient);
+                             medS.setIdServer(idMed);
+                             control.updateMedDaten(medS);
+                            control.setMedtabelviewBD(tv, patient);
+                            close();
                         } catch (Exception es) {
                             es.printStackTrace();
+                            close();
                         }
                     });
+
                 }
 
                 // Mit diese setOnAction kann ein Medikation Statement gelöscht werden

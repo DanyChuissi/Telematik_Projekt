@@ -534,6 +534,10 @@ public class Krankenhaus {
         String updatePa = "UPDATE patient SET  name = ?, vorname = ?,gender = ?,active = ?,telefon = ?,birthdate = ?, deseased = ?,Street= ?, location = ?, postalcode = ?, aufnahmeDatum = ?, entlassungsDatum = ? ,entlassungStatus = ?, idServer = ? WHERE identifier = " + id;
         PreparedStatement ps = null;
 
+        System.out.println(p.getIdServer());
+        System.out.println(p.getIdentifier());
+        System.out.println(p.getName());
+
         try {
 
             System.out.println("Krankenhaus ok: ");

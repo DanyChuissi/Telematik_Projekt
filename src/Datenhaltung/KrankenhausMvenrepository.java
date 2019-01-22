@@ -375,9 +375,9 @@ public class KrankenhausMvenrepository {
         Patient p = new Patient();
         String url = "http://fhirtest.uhn.ca/baseDstu3/Patient/"+Id+"?_format=json";
         String jsonString = callURLbyId(url);
-        System.out.println(jsonString);
+        //System.out.println(jsonString);
 
-        System.out.println("\n\njsonArray: " + jsonString);
+       // System.out.println("\n\njsonArray: " + jsonString);
             JSONObject jo = new JSONObject(jsonString);
 
             p.setIdServer(jo.getString("id"));
@@ -452,7 +452,7 @@ public class KrankenhausMvenrepository {
         String jsonString = callURLbyname(url);
         String jsonStringbyName;
         jsonStringbyName = jsonString.substring( 0, jsonString.length() - 1 );
-        System.out.println("\n\njsonArray: " + jsonStringbyName);
+        //System.out.println("\n\njsonArray: " + jsonStringbyName);
 
         try {
             JSONArray jsonArray = new JSONArray(jsonStringbyName);
