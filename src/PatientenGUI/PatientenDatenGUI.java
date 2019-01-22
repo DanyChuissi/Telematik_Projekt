@@ -116,13 +116,7 @@ public class PatientenDatenGUI extends Stage {
         // Die Methode wird aufgerufen wenn es auf "neuPAtient geclikt wird oder auf einen Patient in der Patienten List
         //Hier wird geprüft, ob es auf einen Patient geclickt worden ist
         if (patient != null) {
-            if(patient.getIdentifier() != 0){
-                // Patient lokal, wird nur Mofifiziert
 
-            }
-            else{
-                //Patient vom Server Kann neu gespeichert werden
-            }
             tfname.setText(patient.getName());
             tfvor.setText(patient.getVorname());
             if (patient.getGeburtsdatum() != null) {
@@ -140,8 +134,8 @@ public class PatientenDatenGUI extends Stage {
             } else {
                 nein.setSelected(true);
             }
-            if (patient.getIdentifier() == 0) { // Falls Patient vom Server ist
-                if(patient.getIdentifier() == 0){
+            if (patient.getIdServer() != null) { // Falls Patient vom Server ist
+                if(patient.getIdentifier() == 0) {
                     save = new Button("Patient im DB Speichern");
 
                     save.setOnAction(e -> {
@@ -163,17 +157,16 @@ public class PatientenDatenGUI extends Stage {
                                 if (patient.getIdentifier() != 0) {
                                     control.updatePatient(patient);
                                 } else {
-                                    speicherungOK =AddPAtientVomServerInDB(primaryStage,control,patient);
+                                    speicherungOK = AddPAtientVomServerInDB(primaryStage, control, patient);
                                 }
-                                if(!speicherungOK){
+                                if (!speicherungOK) {
                                     Formatter formatter = new Formatter();
                                     formatter.format("Patient schon Vorhanden");
 
                                     JOptionPane.showMessageDialog(null, formatter.toString());
                                     formatter.close();
                                     close();
-                                }
-                                else {
+                                } else {
                                     control.setPatTableview();
                                     close();
                                 }
@@ -209,49 +202,49 @@ public class PatientenDatenGUI extends Stage {
                     });
                 }
 
-                saveServer.setText("Update Daten");
-                hb.getChildren().setAll(save, abbrechen);
-                grid.add(saveServer, 0, 9);
-                saveServer.setOnAction(e -> {
-                    // Patient im Server Updaten mit Patch Methode
+                    saveServer.setText("Update Daten");
+                    hb.getChildren().setAll(save, abbrechen);
+                    grid.add(saveServer, 0, 9);
+                    saveServer.setOnAction(e -> {
+                        // Patient im Server Updaten mit Patch Methode
 
 
-                    neu.setIdServer(patient.getIdServer());
-                    neu.setVersionId(patient.getVersionId());
-                    neu.setMedicament(patient.getMedicament());
-                    neu.setIdentifier(patient.getIdentifier());
-                    neu.setAufnahmeDatum(patient.getAufnahmeDatum());
-                    neu.setEntlassungsDatum(patient.getEntlassungsDatum());
-                    neu.setEnlassungStatus(patient.getEntlassungStatus());
+                        neu.setIdServer(patient.getIdServer());
+                        neu.setVersionId(patient.getVersionId());
+                        neu.setMedicament(patient.getMedicament());
+                        neu.setIdentifier(patient.getIdentifier());
+                        neu.setAufnahmeDatum(patient.getAufnahmeDatum());
+                        neu.setEntlassungsDatum(patient.getEntlassungsDatum());
+                        neu.setEnlassungStatus(patient.getEntlassungStatus());
 
-                    int plz = Integer.parseInt(tfpostalc.getText());
-                    boolean speicherungOK = true;
-                    neu.setName(tfname.getText());
-                    neu.setVorname(tfvor.getText());
-                    try {
-                        neu.setGeburtsdatum(neu.stringToSqlDate(tfgebD.getValue().toString()));
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
-                    }
-                    neu.setGeburtsdatumS(tfgebD.getValue().toString());
-                    neu.setTelefon(tftel.getText());
-                    neu.setGender(genderComboBox.getValue());
-                    neu.setStreet(tfstreet.getText());
-                    neu.setPostalcode(plz);
-                    neu.setLocation(tflocation.getText());
-                    //neu.setGeburtsdatum(patient.getGeburtsdatum());
+                        int plz = Integer.parseInt(tfpostalc.getText());
+                        boolean speicherungOK = true;
+                        neu.setName(tfname.getText());
+                        neu.setVorname(tfvor.getText());
+                        try {
+                            neu.setGeburtsdatum(neu.stringToSqlDate(tfgebD.getValue().toString()));
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                        neu.setGeburtsdatumS(tfgebD.getValue().toString());
+                        neu.setTelefon(tftel.getText());
+                        neu.setGender(genderComboBox.getValue());
+                        neu.setStreet(tfstreet.getText());
+                        neu.setPostalcode(plz);
+                        neu.setLocation(tflocation.getText());
+                        //neu.setGeburtsdatum(patient.getGeburtsdatum());
 
-                    if (ja.isSelected())
-                        neu.setDeseased(true);
-                    try {
-                        int  anzahlMed =  this.patientUpdaten( patient , neu);
+                        if (ja.isSelected())
+                            neu.setDeseased(true);
+                        try {
+                            int anzahlMed = this.patientUpdaten(patient, neu);
                             control.updatePatient(neu);
                             control.setPatTableview();
                             String text = "Patient wurde im Server modifiziert";
-                            if(anzahlMed > 0) {
+                            if (anzahlMed > 0) {
                                 text = text + " " + "und " + anzahlMed + " Medication wurden hochgeladen";
                             }
-                            if(anzahlMed > 0){
+                            if (anzahlMed > 0) {
                                 Formatter formatter = new Formatter();
                                 formatter.format(text);
 
@@ -260,10 +253,10 @@ public class PatientenDatenGUI extends Stage {
                             }
 
                             close();
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                    }
-                });
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    });
 
             }
             else{ // falls Patient Lokal ist
